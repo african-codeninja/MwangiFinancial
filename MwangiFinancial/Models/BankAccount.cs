@@ -11,7 +11,7 @@ namespace MwangiFinancial.Models
         public int Id { get; set; }
 
         //Foreign Keys
-        public int HouseHoldId { get; set; }
+        public int HouseholdId { get; set; }
         public int BankAccountTypeId { get; set; }
 
         //Structure
@@ -21,7 +21,7 @@ namespace MwangiFinancial.Models
         public decimal CurrentBalance { get; set; }
 
         //Nav
-        public virtual HouseHold HouseHold { get; set; }
+        public virtual Household Household { get; set; }
 
         public virtual ICollection<Transaction> Transactions { get; set; }
         public virtual ICollection<BankAccountType> BankAccountTypes { get; set; }
