@@ -13,6 +13,8 @@ namespace MwangiFinancial.Models
         //Foreign Keys
         public int HouseholdId { get; set; }
         public int BankAccountTypeId { get; set; }
+        public int TransactionId { get; set; }            
+        public string OwnerUserId { get; set; }
 
         //Structure
         public string Name { get; set; }
@@ -22,6 +24,11 @@ namespace MwangiFinancial.Models
 
         //Nav
         public virtual Household Household { get; set; }
+        public virtual BankAccountType BankAccountType { get; set; }
+        public virtual Transaction Transaction { get; set; }
+        public virtual ApplicationUser OwnerUser { get; set; }
+
+
 
         public virtual ICollection<Transaction> Transactions { get; set; }
         public virtual ICollection<BankAccountType> BankAccountTypes { get; set; }
