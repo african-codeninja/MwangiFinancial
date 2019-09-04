@@ -50,8 +50,8 @@ namespace MwangiFinancial.Migrations
 
             context.Households.AddOrUpdate(
                 h => h.Name,
-                new HouseHold { Name = "The Lobby", Greeting = "Welcome to the lobby!", Created = DateTimeOffset.UtcNow.ToLocalTime() },
-                new HouseHold { Name = "Demo Household", Greeting = "Welcome everyone!", Created = DateTimeOffset.UtcNow.ToLocalTime(), IsConfigured = true }
+                new Household { Name = "The Lobby", Greeting = "Welcome to the lobby!", Created = DateTimeOffset.UtcNow.ToLocalTime() },
+                new Household { Name = "Demo Household", Greeting = "Welcome everyone!", Created = DateTimeOffset.UtcNow.ToLocalTime(), IsConfigured = true }
                 );
             #endregion
 
@@ -69,7 +69,7 @@ namespace MwangiFinancial.Migrations
                     Email = "Admin@Mailinator.com",
                     FirstName = "Admin",
                     LastName = "Administrator",
-                    AvatarUrl = "/Uploads/leonardo-admin.png",
+                    AvatarUrl = "/Uploads/admin-icon.jpg",
                     DisplayName = "The Admin"
                 }, "Admin@money");
             }
@@ -86,7 +86,7 @@ namespace MwangiFinancial.Migrations
                     FirstName = "Moses",
                     LastName = "Mwangi",
                     DisplayName = "The Boss",
-                    AvatarUrl = "/Uploads/bald-head-147977_640.png",
+                    AvatarUrl = "/Uploads/dev-icon.png",
                     Email = "mosesmwangi@mailinator.com",
                     UserName = "mosesmwangi@mailinator.com"
 
@@ -106,7 +106,7 @@ namespace MwangiFinancial.Migrations
                     Email = "josephine@Mailinator.com",
                     FirstName = "Jose",
                     LastName = "CFO",
-                    AvatarUrl = "/Uploads/Raphael-PM.png",
+                    AvatarUrl = "/Uploads/pm-icon.png",
                     DisplayName = "The CFO"
                 }, "Josephine@money");
             }
@@ -124,11 +124,11 @@ namespace MwangiFinancial.Migrations
                     Email = "Zuri@Mailinator.com",
                     FirstName = "Zuri",
                     LastName = "Mbutha",
-                    AvatarUrl = "/Uploads/Donatello-developer.png",
+                    AvatarUrl = "/Uploads/sub-icon.png",
                     DisplayName = "Lobbyist"
                 }, "Zuri@money");
             }
-            var lobbyistId = userManager.FindByEmail("mosesmwangi@mailinator.com");
+            var lobbyistId = userManager.FindByEmail("Zuri@mailinator.com");
             userManager.AddToRole(lobbyistId.Id, "LobbyMember");
             #endregion
 
@@ -145,9 +145,9 @@ namespace MwangiFinancial.Migrations
             //seeding a demo account
             context.BankAccounts.AddOrUpdate(
                 c => c.Name,
-                new BankAccount { Name = "Demo Checking Account", BankAccountTypeId = 001, HouseHoldId = seedHouseId, StartingBalance = 1000, CurrentBalance = 1000, LowBalance = 200 },
-                new BankAccount { Name = "Demo Saings Account", BankAccountTypeId = 002, HouseHoldId = seedHouseId, StartingBalance = 1000, CurrentBalance = 1000, LowBalance = 200 },
-                new BankAccount { Name = "Demo MoneyMarket Account", BankAccountTypeId = 003, HouseHoldId = seedHouseId, StartingBalance = 1000, CurrentBalance = 1000, LowBalance = 200 }
+                new BankAccount { Name = "Demo Checking Account", BankAccountTypeId = 001, HouseholdId = seedHouseId, StartingBalance = 1000, CurrentBalance = 1000, LowBalance = 200 },
+                new BankAccount { Name = "Demo Saings Account", BankAccountTypeId = 002, HouseholdId = seedHouseId, StartingBalance = 1000, CurrentBalance = 1000, LowBalance = 200 },
+                new BankAccount { Name = "Demo MoneyMarket Account", BankAccountTypeId = 003, HouseholdId = seedHouseId, StartingBalance = 1000, CurrentBalance = 1000, LowBalance = 200 }
 
                 ); ;
             #endregion
@@ -156,14 +156,14 @@ namespace MwangiFinancial.Migrations
             //creating budget categories
             context.MyBudget.AddOrUpdate(
                 b => b.BugetCategoryName,
-                new Budget { BugetCategoryName = "Bills", HouseHoldId = seedHouseId, TargetAmount = 300 },
-                new Budget { BugetCategoryName = "Food", HouseHoldId = seedHouseId, TargetAmount = 400 },
-                new Budget { BugetCategoryName = "Car Expenses", HouseHoldId = seedHouseId, TargetAmount = 250 },
-                new Budget { BugetCategoryName = "Home Maintenance", HouseHoldId = seedHouseId, TargetAmount = 100 },
-                new Budget { BugetCategoryName = "Subscriptions", HouseHoldId = seedHouseId, TargetAmount = 80 },
-                new Budget { BugetCategoryName = "Medical", HouseHoldId = seedHouseId, TargetAmount = 200 },
-                new Budget { BugetCategoryName = "Entertainment", HouseHoldId = seedHouseId, TargetAmount = 250 },
-                new Budget { BugetCategoryName = "Miscellaneous", HouseHoldId = seedHouseId, TargetAmount = 250 }
+                new Budget { BugetCategoryName = "Bills", HouseholdId = seedHouseId, TargetAmount = 300 },
+                new Budget { BugetCategoryName = "Food", HouseholdId = seedHouseId, TargetAmount = 400 },
+                new Budget { BugetCategoryName = "Car Expenses", HouseholdId = seedHouseId, TargetAmount = 250 },
+                new Budget { BugetCategoryName = "Home Maintenance", HouseholdId = seedHouseId, TargetAmount = 100 },
+                new Budget { BugetCategoryName = "Subscriptions", HouseholdId = seedHouseId, TargetAmount = 80 },
+                new Budget { BugetCategoryName = "Medical", HouseholdId = seedHouseId, TargetAmount = 200 },
+                new Budget { BugetCategoryName = "Entertainment", HouseholdId = seedHouseId, TargetAmount = 250 },
+                new Budget { BugetCategoryName = "Miscellaneous", HouseholdId = seedHouseId, TargetAmount = 250 }
                 );
             #endregion
 
