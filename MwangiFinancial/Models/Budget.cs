@@ -16,7 +16,7 @@ namespace MwangiFinancial.Models
         public string BugetCategoryName { get; set; }
         public decimal TargetAmount { get; set; }
 
-        //nav
+        //Virtual Nav
         public virtual Household Household { get; set; }
         public virtual ICollection<BudgetItem> BudgetItems { get; set; }
 
