@@ -179,7 +179,7 @@
     <Compile Include="Models\BankAccountType.cs" />
     <Compile Include="Models\BudgetItem.cs" />
     <Compile Include="Models\Budget.cs" />
-    <Compile Include="Models\HouseHold.cs" />
+    <Compile Include="Models\Household.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\Invitation.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
@@ -212,6 +212,10 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="Uploads\admin-icon.jpg" />
+    <Content Include="Uploads\dev-icon.png" />
+    <Content Include="Uploads\pm-icon.png" />
+    <Content Include="Uploads\sub-icon.png" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -249,7 +253,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Uploads\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
