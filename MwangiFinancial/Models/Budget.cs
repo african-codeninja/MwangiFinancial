@@ -7,14 +7,17 @@ namespace MwangiFinancial.Models
 {
     public class Budget
     {
+        //Primary Key
         public int Id { get; set; }
-        public int HouseHoldId { get; set; }
+
+        //Foreign Key
+        public int HouseholdId { get; set; }
         public int BudgetItemId { get; set; }
         public string BugetCategoryName { get; set; }
         public decimal TargetAmount { get; set; }
 
         //nav
-        public virtual HouseHold HouseHold { get; set; }
+        public virtual Household Household { get; set; }
         public virtual ICollection<BudgetItem> BudgetItems { get; set; }
 
         public Budget()
