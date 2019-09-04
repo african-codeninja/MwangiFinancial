@@ -22,6 +22,6 @@ namespace MwangiFinancial.Models
         public DateTimeOffset Created { get; set; }
 
         //Virtual Navigation
-        public virtual HouseHold HouseHold { get; set; }
+        public virtual Household Household { get; set; }
     }
 }
