@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -11,7 +12,7 @@ namespace MwangiFinancial.Models
     public class ApplicationUser : IdentityUser
     {
         //Foreign Key(s)
-        public string HouseHoldId { get; set; }
+        public string HouseholdId { get; set; }
 
         //Structure
         public string FirstName { get; set; }
@@ -20,8 +21,8 @@ namespace MwangiFinancial.Models
         public string AvatarUrl { get; set; }
 
         //Virtual Nav
-        public virtual HouseHold HouseHold { get; set; }
-
+        public virtual Household Household { get; set; }
+       
         [NotMapped]
         public string FullName
         {
@@ -31,12 +32,12 @@ namespace MwangiFinancial.Models
             }
         }
 
-
-
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
             // Note the authenticationType must match the one defined in CookieAuthenticationOptions.AuthenticationType
             var userIdentity = await manager.CreateIdentityAsync(this, DefaultAuthenticationTypes.ApplicationCookie);
+
+            userIdentity.AddClaim(new Claim("HouseholdId", HouseholdId.ToString()));
             // Add custom user claims here
             return userIdentity;
         }
@@ -56,7 +57,7 @@ namespace MwangiFinancial.Models
 
         public DbSet<BankAccount> BankAccounts { get; set; }
         public DbSet<BankAccountType> BankAccountTypes { get; set; }
-        public DbSet<HouseHold> Households { get; set; }
+        public DbSet<Household> Households { get; set; }
         public DbSet<Budget> MyBudget { get; set; }
         public DbSet<BudgetItem> BudgetItems { get; set; }
         public DbSet<Invitation> Invitations { get; set; }
