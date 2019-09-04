@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MwangiFinancial.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -10,9 +11,9 @@ namespace MwangiFinancial.Models
         //key
         public int Id { get; set; }
 
-        //Foreign Keys
-        public int TransactionId { get; set; }
-        public string ReceipientId { get; set; }
+        //Foreign Key
+        public int HouseholdId { get; set; }
+        public string CreatorId { get; set; }
 
         //Structure
         public DateTimeOffset Created { get; set; }
@@ -20,8 +21,8 @@ namespace MwangiFinancial.Models
         public string NotificationBody { get; set; }
         public bool Read { get; set; }
 
-        //Navigation
-        public virtual HouseHold HouseHold { get; set; }
-        public ApplicationUser Receipient { get; set; }
+        //NavigationT
+        public virtual Household Household { get; set; }
+        public ApplicationUser Creator { get; set; }      
     }
 }
