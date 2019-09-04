@@ -12,8 +12,8 @@ namespace MwangiFinancial.Models
 
         //Foreign Key
         public int BankAccountId { get; set; }
-        public int EnteredById { get; set; }
-        public int BudgetId { get; set; }
+        public int? BudgetItemId { get; set; }
+        public string EnteredById { get; set; }
         public int TransactionTypeId { get; set; }
 
         //Structure
