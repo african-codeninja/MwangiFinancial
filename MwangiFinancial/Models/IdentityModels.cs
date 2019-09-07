@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Security.Claims;
@@ -12,16 +13,35 @@ namespace MwangiFinancial.Models
     public class ApplicationUser : IdentityUser
     {
         //Foreign Key(s)
-        public string HouseholdId { get; set; }
+        public int? HouseholdId { get; set; }
 
         //Structure
+        [Required]
+        [MaxLength(40, ErrorMessage = "First Name cannot be greater than 40 characters")]
+        [Display(Name = "First Name")]
         public string FirstName { get; set; }
+        [Required]
+        [MaxLength(40, ErrorMessage = "Last Name cannot be greater than 40 characters")]
+        [Display(Name = "Last Name")]
         public string LastName { get; set; }
+        [MaxLength(40, ErrorMessage = "Display Name cannot be greater than 40 characters")]
+        [Display(Name = "Display Name")]
         public string DisplayName { get; set; }
+        [Display(Name = "Avatar path")]
         public string AvatarUrl { get; set; }
 
-        //Virtual Nav
+        //Virtual Nav: Child of
         public virtual Household Household { get; set; }
+
+        //Parent of
+        public virtual ICollection<Transaction> Transactions { get; set; }
+        public virtual ICollection<Notification> Notifications { get; set; }
+
+        public ApplicationUser()
+        {
+            Transactions = new HashSet<Transaction>();
+            Notifications = new HashSet<Notification>();
+        }
        
         [NotMapped]
         public string FullName
@@ -56,13 +76,11 @@ namespace MwangiFinancial.Models
         }
 
         public DbSet<BankAccount> BankAccounts { get; set; }
-        public DbSet<BankAccountType> BankAccountTypes { get; set; }
         public DbSet<Household> Households { get; set; }
         public DbSet<Budget> MyBudget { get; set; }
         public DbSet<BudgetItem> BudgetItems { get; set; }
         public DbSet<Invitation> Invitations { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
-        public DbSet<TransactionType> TransactionTypes { get; set; }
     }
 }
