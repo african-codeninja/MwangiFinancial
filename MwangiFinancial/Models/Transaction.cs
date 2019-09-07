@@ -1,5 +1,7 @@
-﻿using System;
+﻿using MwangiFinancial.Enumeration;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
@@ -11,25 +13,24 @@ namespace MwangiFinancial.Models
         public int Id { get; set; }
 
         //Foreign Key
-        public int BankAccountId { get; set; }
+        public int? BankAccountId { get; set; }
         public int? BudgetItemId { get; set; }
         public string EnteredById { get; set; }
-        public int TransactionTypeId { get; set; }
+
+        //Enum Reference
+        public TransactionType Type { get; set; }
 
         //Structure
-        public string Amount { get; set; }
+        [Display(Name = "Low Balance Level")]
+        [Range(0.0, 10000000)]
+        public decimal Amount { get; set; }
         public string Description { get; set; }
         public DateTimeOffset Date { get; set; }
         
-        //virtual Nav
+        //virtual Nav to Parents Bank Account, BudgetItem and Application User
         public virtual BankAccount BankAccount { get; set; }
         public virtual BudgetItem BudgetItem { get; set; }
         public virtual ApplicationUser EnteredBy { get; set; }
-        public virtual ICollection<TransactionType> TransactionTypes { get; set; }
 
-        public Transaction()
-        {
-            TransactionTypes = new HashSet<TransactionType>();
-        }
     }
 }
