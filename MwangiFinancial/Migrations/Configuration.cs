@@ -1,5 +1,6 @@
 namespace MwangiFinancial.Migrations
 {
+    using MwangiFinancial.Enumeration;
     using Microsoft.AspNet.Identity;
     using Microsoft.AspNet.Identity.EntityFramework;
     using MwangiFinancial.Models;
@@ -10,6 +11,8 @@ namespace MwangiFinancial.Migrations
 
     internal sealed class Configuration : DbMigrationsConfiguration <ApplicationDbContext>
     {
+        //if(!System.Diagnostics.Debugger.IsAttached)
+        //System.Diagnostics.Debugger.Launch();
         public Configuration()
         {
             AutomaticMigrationsEnabled = true;
@@ -132,23 +135,12 @@ namespace MwangiFinancial.Migrations
             userManager.AddToRole(lobbyistId.Id, "LobbyMember");
             #endregion
 
-            #region BankAccountTypes
-            context.BankAccountTypes.AddOrUpdate(
-                b => b.TypeName,
-                new BankAccountType { BankAccountId = 001, TypeName = "Checking" },
-                new BankAccountType { BankAccountId = 002, TypeName = "Savings" },
-                new BankAccountType { BankAccountId = 003, TypeName = "MoneyMarket" }
-                );
-            #endregion
-
             #region BankAccount
             //seeding a demo account
             context.BankAccounts.AddOrUpdate(
                 c => c.Name,
-                new BankAccount { Name = "Demo Checking Account", BankAccountTypeId = 001, HouseholdId = seedHouseId, StartingBalance = 1000, CurrentBalance = 1000, LowBalance = 200 },
-                new BankAccount { Name = "Demo Saings Account", BankAccountTypeId = 002, HouseholdId = seedHouseId, StartingBalance = 1000, CurrentBalance = 1000, LowBalance = 200 },
-                new BankAccount { Name = "Demo MoneyMarket Account", BankAccountTypeId = 003, HouseholdId = seedHouseId, StartingBalance = 1000, CurrentBalance = 1000, LowBalance = 200 }
-
+                new BankAccount { Name = "Demo Checking Account", Type = BankAccountType.Checkings , HouseholdId = seedHouseId, StartingBalance = 1000, CurrentBalance = 1000, LowBalance = 200 },
+                new BankAccount { Name = "Demo Saings Account", Type = BankAccountType.savings, HouseholdId = seedHouseId, StartingBalance = 1000, CurrentBalance = 1000, LowBalance = 200 }
                 ); ;
             #endregion
 
@@ -210,6 +202,15 @@ namespace MwangiFinancial.Migrations
                 new BudgetItem { ItemName = "Camera Supplies", BudgetId = Miscellaneous }
                 );
             #endregion               
+
+            #region Transaction
+            context.Transactions.AddOrUpdate(
+                new Transaction { Type = TransactionType.BankDraft, Amount = 200, Description = "To Buy stuff for Moving", Date = DateTimeOffset.Now },
+                new Transaction { Type = TransactionType.Deposit, Amount = 1500, Description = "PayDay", Date = DateTimeOffset.Now },
+                new Transaction { Type = TransactionType.Payment, Amount = 700, Description = "Mortgage", Date = DateTimeOffset.Now },
+                new Transaction { Type = TransactionType.Withdrawal, Amount = 100, Description = "Groceries", Date = DateTimeOffset.Now }
+                );
+            #endregion
         }
     }
 }
