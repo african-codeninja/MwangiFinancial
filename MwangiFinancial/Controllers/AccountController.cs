@@ -9,6 +9,8 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using MwangiFinancial.Models;
+using MwangiFinancial.Helpers;
+using System.IO;
 
 namespace MwangiFinancial.Controllers
 {
@@ -147,11 +149,29 @@ namespace MwangiFinancial.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Register(RegisterViewModel model)
+        public async Task<ActionResult> Register(RegisterViewModel model, HttpPostedFileBase image)
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser {
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    UserName = model.Email,
+                    Email = model.Email,
+                    AvatarUrl = "/Uploads/default-avatar.png"
+                };
+
+                if (model.AvatarUrl != null)
+                {
+                    if (ImageUploadValidator.IsWebFriendlyImage(model.AvatarUrl))
+                    {
+                        var fileName = Path.GetFileName(model.AvatarUrl.FileName);
+                        model.AvatarUrl.SaveAs(Path.Combine(Server.MapPath("~/Uploads/"), fileName));
+                        user.AvatarUrl = "/Uploads/" + fileName;
+                    }
+
+                }
+
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
