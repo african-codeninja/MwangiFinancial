@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
@@ -12,10 +13,19 @@ namespace MwangiFinancial.Models
 
         //Foreign Keys
         public int BudgetId { get; set; }
-        public int TransactionId { get; set; }
+
+        //Structure
         public string ItemName { get; set; }
 
-        //Nav
+        //Navigation to parent
         public virtual Budget Budget { get; set; }
+
+        //parent of: Transaction
+        public virtual ICollection<Transaction> Transactions { get; set; }
+
+        public BudgetItem()
+        {
+            Transactions = new HashSet<Transaction>();
+        }
     }
 }
