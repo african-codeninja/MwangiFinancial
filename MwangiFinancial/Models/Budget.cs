@@ -12,12 +12,15 @@ namespace MwangiFinancial.Models
 
         //Foreign Key
         public int HouseholdId { get; set; }
-        public int BudgetItemId { get; set; }
+
+        //Structure
         public string BugetCategoryName { get; set; }
         public decimal TargetAmount { get; set; }
 
-        //Virtual Nav
+        //Virtual Nav to Parent
         public virtual Household Household { get; set; }
+
+        //Virtual Nav from Child
         public virtual ICollection<BudgetItem> BudgetItems { get; set; }
 
         public Budget()
