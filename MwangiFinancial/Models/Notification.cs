@@ -12,7 +12,6 @@ namespace MwangiFinancial.Models
         public int Id { get; set; }
 
         //Foreign Key
-        public int HouseholdId { get; set; }
         public string CreatorId { get; set; }
 
         //Structure
@@ -21,8 +20,7 @@ namespace MwangiFinancial.Models
         public string NotificationBody { get; set; }
         public bool Read { get; set; }
 
-        //NavigationT
-        public virtual Household Household { get; set; }
+        //Navigation parent Applicationuser
         public ApplicationUser Creator { get; set; }      
     }
 }
