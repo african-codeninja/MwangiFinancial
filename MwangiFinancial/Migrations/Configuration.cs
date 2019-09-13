@@ -1,13 +1,12 @@
-namespace MwangiFinancial.Migrations
-{
-    using MwangiFinancial.Enumeration;
-    using Microsoft.AspNet.Identity;
-    using Microsoft.AspNet.Identity.EntityFramework;
-    using MwangiFinancial.Models;
-    using System;
-    using System.Data.Entity;
-    using System.Data.Entity.Migrations;
-    using System.Linq;
+using System;
+using System.Data.Entity.Migrations;
+using System.Linq;
+using System.Web.Configuration;
+using MwangiFinancial.Enumeration;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
+using MwangiFinancial.Models;
+using System.Data.Entity;
 
     internal sealed class Configuration : DbMigrationsConfiguration <ApplicationDbContext>
     {
@@ -272,9 +271,9 @@ namespace MwangiFinancial.Migrations
                     State = State.NC,
                     Zip = 27713
                 }
-                ); ;
+                );
             #endregion
         }
     }
-}
+
 
