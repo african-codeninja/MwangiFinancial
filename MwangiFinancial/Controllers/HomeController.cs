@@ -9,28 +9,12 @@ namespace MwangiFinancial.Controllers
     [RequireHttps]
     public class HomeController : Controller
     {
-        public ActionResult Index()
-        {
-            return View();
-        }
-
+        //This is where you direct newly created users who will then create a household
+        [Authorize(Roles = "LobbyMember")]
         public ActionResult Lobby()
         {
             return View();
         }
 
-        public ActionResult About()
-        {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
-        }
-
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
-        }
     }
 }

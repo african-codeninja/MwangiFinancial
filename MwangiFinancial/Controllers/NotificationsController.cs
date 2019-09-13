@@ -15,9 +15,10 @@ namespace MwangiFinancial.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Notifications
+        [Authorize(Roles = "HeadOfHouse")]
         public ActionResult Index()
         {
-            var notifications = db.Notifications.Include(n => n.Creator);
+            var notifications = db.Notifications.Include(n => n.Created);
             return View(notifications.ToList());
         }
 
@@ -57,7 +58,7 @@ namespace MwangiFinancial.Controllers
                 return RedirectToAction("Index");
             }
 
-            ViewBag.CreatorId = new SelectList(db.Users, "Id", "FirstName", notification.CreatorId);
+            ViewBag.CreatorId = new SelectList(db.Users, "Id", "FirstName", notification.HouseholdId);
             return View(notification);
         }
 
@@ -73,7 +74,7 @@ namespace MwangiFinancial.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.CreatorId = new SelectList(db.Users, "Id", "FirstName", notification.CreatorId);
+            ViewBag.CreatorId = new SelectList(db.Users, "Id", "FirstName", notification.HouseholdId);
             return View(notification);
         }
 
@@ -90,7 +91,7 @@ namespace MwangiFinancial.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.CreatorId = new SelectList(db.Users, "Id", "FirstName", notification.CreatorId);
+            ViewBag.CreatorId = new SelectList(db.Users, "Id", "FirstName", notification.HouseholdId);
             return View(notification);
         }
 

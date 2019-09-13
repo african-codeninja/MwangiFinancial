@@ -11,12 +11,19 @@ using Microsoft.Owin.Security;
 using MwangiFinancial.Models;
 using MwangiFinancial.Helpers;
 using System.IO;
+using MwangiFinancial.Enumeration;
+using System.Net.Mail;
+using System.Configuration;
 
 namespace MwangiFinancial.Controllers
 {
+    [RequireHttps]
     [Authorize]
     public class AccountController : Controller
     {
+        private RoleHelper roleHelper = new RoleHelper();
+        private ApplicationDbContext db = new ApplicationDbContext();
+
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 
@@ -81,7 +88,31 @@ namespace MwangiFinancial.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-                    return RedirectToLocal(returnUrl);
+                    if (!string.IsNullOrEmpty(returnUrl))
+                    {
+                        return RedirectToLocal(returnUrl);
+                    }
+                    else
+                    {
+                        var currentUserId = db.Users.FirstOrDefault(u => u.Email == model.Email).Id;
+                        var currentUserRole = roleHelper.ListUserRoles(currentUserId).FirstOrDefault();
+                        if (currentUserRole == "LobbyMember")
+                        {
+                            return RedirectToAction("Lobby", "Home");
+                        }
+                        else if (currentUserRole == "HeadOfHouse" || currentUserRole == "Resident")
+                        {
+                            return RedirectToAction("Dashboard", "Households");
+                        }
+                        else if (currentUserRole == "Admin")
+                        {
+                            return RedirectToAction("Dashboard", "Admin");
+                        }
+                        else
+                        {
+                            return RedirectToAction("Error", "Shared");
+                        }
+                    }
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:
@@ -158,7 +189,7 @@ namespace MwangiFinancial.Controllers
                     LastName = model.LastName,
                     UserName = model.Email,
                     Email = model.Email,
-                    AvatarUrl = "/Uploads/default-avatar.png"
+                    HouseholdId = db.Households.Where(h => h.Name == "The Lobby").FirstOrDefault().Id
                 };
 
                 if (model.AvatarUrl != null)
@@ -170,6 +201,10 @@ namespace MwangiFinancial.Controllers
                         user.AvatarUrl = "/Uploads/" + fileName;
                     }
 
+                }
+                else
+                {
+                    user.AvatarUrl = "/Uploads/default-avatar.png";
                 }
 
                 var result = await UserManager.CreateAsync(user, model.Password);
@@ -186,6 +221,82 @@ namespace MwangiFinancial.Controllers
                     return RedirectToAction("Index", "Home");
                 }
                 AddErrors(result);
+            }
+
+            // If we got this far, something failed, redisplay form
+            return View(model);
+        }
+
+        //
+        // GET: /Account/InviteRegister
+        public ActionResult InviteRegister(Guid code, string email)
+        {
+            var myInviteRegGM = new InviteRegisterViewModel
+            {
+                Code = code,
+                Email = email
+            };
+            return View();
+        }
+
+        //
+        // POST: /Account/InviteRegister
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> InviteRegister(InviteRegisterViewModel model, HttpPostedFileBase avatar)
+        {
+            if (ModelState.IsValid)
+            {
+                var invite = db.Invitations.FirstOrDefault(i => i.Code == model.Code && i.ReciepientEmail == model.Email);
+                if (invite == null)
+                {
+                    //add gritter that inv is no good
+                    RedirectToAction("Register", "Account");
+                }
+                var isUsed = invite.used;
+                if (!isUsed)
+                {
+                    var user = new ApplicationUser { UserName = model.Email, Email = model.Email, FirstName = model.FirstName, LastName = model.LastName, HouseholdId = db.Invitations.FirstOrDefault(i => i.Code == model.Code).HouseholdId };
+
+                    if (avatar != null)
+                    {
+                        //start processing my image
+                        if (ImageUploadValidator.IsWebFriendlyImage(avatar))
+                        {
+                            var fileName = Path.GetFileName(avatar.FileName).Replace(' ', '_');
+                            avatar.SaveAs(Path.Combine(Server.MapPath("~/Avatar/"), fileName));
+                            user.AvatarUrl = "/Avatar/" + fileName;
+                        }
+                    }
+                    else
+                    {
+                        user.AvatarUrl = "/Avatar/Default-avatar.jpg";
+                    }
+
+                    var result = await UserManager.CreateAsync(user, model.Password);
+                    if (result.Succeeded)
+                    {
+                        invite.used = true;
+                        db.SaveChanges();
+                        roleHelper.AddUserToRole(user.Id, AppRole.Resident);
+                        await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+
+                        // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
+                        // Send an email with this link
+                        string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                        var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                        await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+
+                        return RedirectToAction("Dashboard", "Households");
+                    }
+                    AddErrors(result);
+                }
+                else
+                {
+                    //gritter telling them invite has been used
+                    RedirectToAction("Register", "Account");
+                }
             }
 
             // If we got this far, something failed, redisplay form

@@ -59,8 +59,11 @@ namespace MwangiFinancial.Migrations
             #endregion
 
             context.SaveChanges();
-            var seedHouseId = context.Households.AsNoTracking().FirstOrDefault(h => h.Name == "Demo Household").Id;
-            var seedLobbyId = context.Households.AsNoTracking().FirstOrDefault(h => h.Name == "The Lobby").Id;
+
+            var houses = context.Households.AsNoTracking();
+
+            var seedHouseId = houses.FirstOrDefault(h => h.Name == "Demo Household").Id;
+            var seedLobbyId = houses.FirstOrDefault(h => h.Name == "The Lobby").Id;
 
             #region Seeding Admin
             //Seeding Admin
@@ -73,7 +76,8 @@ namespace MwangiFinancial.Migrations
                     FirstName = "Admin",
                     LastName = "Administrator",
                     AvatarUrl = "/Uploads/admin-icon.jpg",
-                    DisplayName = "The Admin"
+                    DisplayName = "The Admin",
+                    HouseholdId = seedLobbyId
                 }, "Admin@money");
             }
             var adminId = userManager.FindByEmail("Admin@mailinator.com");
@@ -86,13 +90,13 @@ namespace MwangiFinancial.Migrations
             {
                 userManager.Create(new ApplicationUser
                 {
+                    UserName = "mosesmwangi@mailinator.com",
                     FirstName = "Moses",
                     LastName = "Mwangi",
-                    DisplayName = "The Boss",
                     AvatarUrl = "/Uploads/dev-icon.png",
                     Email = "mosesmwangi@mailinator.com",
-                    UserName = "mosesmwangi@mailinator.com"
-
+                    DisplayName = "The Boss",
+                    HouseholdId = seedHouseId
                 }, "Mwangi@money");
             }
             var hoHouseId = userManager.FindByEmail("mosesmwangi@mailinator.com");
@@ -110,7 +114,9 @@ namespace MwangiFinancial.Migrations
                     FirstName = "Jose",
                     LastName = "CFO",
                     AvatarUrl = "/Uploads/pm-icon.png",
-                    DisplayName = "The CFO"
+                    DisplayName = "The CFO",
+                    HouseholdId = seedHouseId
+                    
                 }, "Josephine@money");
             }
             var memberId = userManager.FindByEmail("josephine@mailinator.com");
@@ -128,34 +134,27 @@ namespace MwangiFinancial.Migrations
                     FirstName = "Zuri",
                     LastName = "Mbutha",
                     AvatarUrl = "/Uploads/sub-icon.png",
-                    DisplayName = "Lobbyist"
+                    DisplayName = "Lobbyist",
+                    HouseholdId = seedLobbyId
+
                 }, "Zuri@money");
             }
             var lobbyistId = userManager.FindByEmail("Zuri@mailinator.com");
             userManager.AddToRole(lobbyistId.Id, "LobbyMember");
             #endregion
-
-            #region BankAccount
-            //seeding a demo account
-            context.BankAccounts.AddOrUpdate(
-                c => c.Name,
-                new BankAccount { Name = "Demo Checking Account", Type = BankAccountType.Checkings , HouseholdId = seedHouseId, StartingBalance = 1000, CurrentBalance = 1000, LowBalance = 200 },
-                new BankAccount { Name = "Demo Saings Account", Type = BankAccountType.savings, HouseholdId = seedHouseId, StartingBalance = 1000, CurrentBalance = 1000, LowBalance = 200 }
-                ); ;
-            #endregion
-
+           
             #region Budget
             //creating budget categories
             context.MyBudget.AddOrUpdate(
-                b => b.BugetCategoryName,
-                new Budget { BugetCategoryName = "Bills", HouseholdId = seedHouseId, TargetAmount = 300 },
-                new Budget { BugetCategoryName = "Food", HouseholdId = seedHouseId, TargetAmount = 400 },
-                new Budget { BugetCategoryName = "Car Expenses", HouseholdId = seedHouseId, TargetAmount = 250 },
-                new Budget { BugetCategoryName = "Home Maintenance", HouseholdId = seedHouseId, TargetAmount = 100 },
-                new Budget { BugetCategoryName = "Subscriptions", HouseholdId = seedHouseId, TargetAmount = 80 },
-                new Budget { BugetCategoryName = "Medical", HouseholdId = seedHouseId, TargetAmount = 200 },
-                new Budget { BugetCategoryName = "Entertainment", HouseholdId = seedHouseId, TargetAmount = 250 },
-                new Budget { BugetCategoryName = "Miscellaneous", HouseholdId = seedHouseId, TargetAmount = 250 }
+                b => b.BudgetName,
+                new Budget { BudgetName = "Bills", HouseholdId = seedHouseId, TargetAmount = 300 },
+                new Budget { BudgetName = "Food", HouseholdId = seedHouseId, TargetAmount = 400 },
+                new Budget { BudgetName = "Car Expenses", HouseholdId = seedHouseId, TargetAmount = 250 },
+                new Budget { BudgetName = "Home Maintenance", HouseholdId = seedHouseId, TargetAmount = 100 },
+                new Budget { BudgetName = "Subscriptions", HouseholdId = seedHouseId, TargetAmount = 80 },
+                new Budget { BudgetName = "Medical", HouseholdId = seedHouseId, TargetAmount = 200 },
+                new Budget { BudgetName = "Entertainment", HouseholdId = seedHouseId, TargetAmount = 250 },
+                new Budget { BudgetName = "Miscellaneous", HouseholdId = seedHouseId, TargetAmount = 250 }
                 );
             #endregion
 
@@ -163,18 +162,20 @@ namespace MwangiFinancial.Migrations
             //Instantiation
             context.SaveChanges();
 
-            var BillsId = context.MyBudget.AsNoTracking().Where(b => b.BugetCategoryName == "Bills").FirstOrDefault().Id;
-            var FoodId = context.MyBudget.AsNoTracking().Where(b => b.BugetCategoryName == "Food").FirstOrDefault().Id;
-            var CarId = context.MyBudget.AsNoTracking().Where(b => b.BugetCategoryName == "Car Expenses").FirstOrDefault().Id;
-            var HomeMaintenanceId = context.MyBudget.AsNoTracking().Where(b => b.BugetCategoryName == "Home Maintenance").FirstOrDefault().Id;
-            var Medical = context.MyBudget.AsNoTracking().Where(b => b.BugetCategoryName == "Medical").FirstOrDefault().Id;
-            var Entertainment = context.MyBudget.AsNoTracking().Where(b => b.BugetCategoryName == "Entertainment").FirstOrDefault().Id;
-            var Miscellaneous = context.MyBudget.AsNoTracking().Where(b => b.BugetCategoryName == "Miscellaneous").FirstOrDefault().Id;
+            var budgets = context.MyBudget.AsNoTracking();
+
+            var BillsId = budgets.FirstOrDefault(b => b.BudgetName == "Bills").Id;
+            var FoodId = budgets.FirstOrDefault(b => b.BudgetName == "Food").Id;
+            var CarId = budgets.FirstOrDefault(b => b.BudgetName == "Bills").Id;
+            var HomeMaintenanceId = budgets.FirstOrDefault(b => b.BudgetName == "Car Expenses").Id;
+            var Medical = budgets.FirstOrDefault(b => b.BudgetName == "Home Maintenance").Id;
+            var Entertainment = budgets.FirstOrDefault(b => b.BudgetName == "Medical").Id;
+            var Miscellaneous = budgets.FirstOrDefault(b => b.BudgetName == "Entertainment").Id;
 
             //seeding
             context.BudgetItems.AddOrUpdate(
                 b =>b.ItemName,
-                new BudgetItem { ItemName = "Gas Bill", BudgetId = BillsId },
+                new BudgetItem { ItemName = "Gas Bill", BudgetId = BillsId , },
                 new BudgetItem { ItemName = "Electric Bill", BudgetId = BillsId },               
                 new BudgetItem { ItemName = "Water Bill", BudgetId = BillsId },
                 new BudgetItem { ItemName = "Internet/Phone Bill", BudgetId = BillsId },
@@ -205,11 +206,41 @@ namespace MwangiFinancial.Migrations
 
             #region Transaction
             context.Transactions.AddOrUpdate(
-                new Transaction { Type = TransactionType.BankDraft, Amount = 200, Description = "To Buy stuff for Moving", Date = DateTimeOffset.Now },
-                new Transaction { Type = TransactionType.Deposit, Amount = 1500, Description = "PayDay", Date = DateTimeOffset.Now },
-                new Transaction { Type = TransactionType.Payment, Amount = 700, Description = "Mortgage", Date = DateTimeOffset.Now },
-                new Transaction { Type = TransactionType.Withdrawal, Amount = 100, Description = "Groceries", Date = DateTimeOffset.Now }
+                new Transaction { Type = TransactionType.BankDraft, Amount = 200, Description = "To Buy stuff for Moving", Created = DateTimeOffset.Now },
+                new Transaction { Type = TransactionType.Deposit, Amount = 1500, Description = "PayDay", Created = DateTimeOffset.Now },
+                new Transaction { Type = TransactionType.Payment, Amount = 700, Description = "Mortgage", Created = DateTimeOffset.Now },
+                new Transaction { Type = TransactionType.Withdrawal, Amount = 100, Description = "Groceries", Created = DateTimeOffset.Now }
                 );
+            #endregion
+
+            #region BankAccount
+            //seeding a demo account
+            context.BankAccounts.AddOrUpdate(
+                c => c.Name,
+                new BankAccount
+                {
+                    Name = "Bb&t Checking Account",                 
+                    Type = BankAccountType.Checkings,
+                    HouseholdId = seedHouseId,
+                    StartingBalance = 1000,
+                    CurrentBalance = 1000,
+                    LowBalance = 200,
+                    Address1 =,
+                    Address2 =,
+                    State = State.NC,
+                    Zip = 27703
+                },
+
+                new BankAccount
+                {
+                    Name = "Demo Saings Account",
+                    Type = BankAccountType.savings,
+                    HouseholdId = seedHouseId,
+                    StartingBalance = 1000,
+                    CurrentBalance = 1000,
+                    LowBalance = 200
+                }
+                ); ;
             #endregion
         }
     }

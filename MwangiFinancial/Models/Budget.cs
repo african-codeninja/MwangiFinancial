@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 
@@ -14,7 +15,9 @@ namespace MwangiFinancial.Models
         public int HouseholdId { get; set; }
 
         //Structure
-        public string BugetCategoryName { get; set; }
+        [Display(Name = "Budget Name")]
+        public string BudgetName { get; set; }
+        [Display(Name = "Target Amount")]
         public decimal TargetAmount { get; set; }
 
         //Virtual Nav to Parent

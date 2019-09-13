@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using MwangiFinancial.Helpers;
 using MwangiFinancial.Models;
 
 namespace MwangiFinancial.Controllers
@@ -13,12 +14,16 @@ namespace MwangiFinancial.Controllers
     public class HouseholdsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
+        private RoleHelper roleHelper = new RoleHelper();
+        private HouseholdHelper householdHelper = new HouseholdHelper();
 
         // GET: Households
         public ActionResult Index()
         {
             return View(db.Households.ToList());
         }
+
+        //
 
         // GET: Households/Details/5
         public ActionResult Details(int? id)

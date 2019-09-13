@@ -24,9 +24,12 @@ namespace MwangiFinancial.Models
         [Display(Name = "Low Balance Level")]
         [Range(0.0, 10000000)]
         public decimal Amount { get; set; }
+        public string Payee { get; set; }
         public string Description { get; set; }
-        public DateTimeOffset Date { get; set; }
-        
+        public DateTimeOffset Created { get; set; }
+        public bool Reconciled { get; set; }
+        public DateTimeOffset? ReconciledDate { get; set; }
+
         //virtual Nav to Parents Bank Account, BudgetItem and Application User
         public virtual BankAccount BankAccount { get; set; }
         public virtual BudgetItem BudgetItem { get; set; }

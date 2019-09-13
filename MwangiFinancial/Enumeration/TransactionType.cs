@@ -9,6 +9,8 @@ namespace MwangiFinancial.Enumeration
     {
         Withdrawal,
         Deposit,
+        AdjustUp,
+        AdjustDown,
         Payment,
         BankDraft
     }
