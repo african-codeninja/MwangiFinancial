@@ -222,23 +222,55 @@ namespace MwangiFinancial.Migrations
                     Name = "Bb&t Checking Account",                 
                     Type = BankAccountType.Checkings,
                     HouseholdId = seedHouseId,
-                    StartingBalance = 1000,
+                    StartingBalance = 5000,
                     CurrentBalance = 1000,
                     LowBalance = 200,
-                    Address1 =,
-                    Address2 =,
+                    Address1 = "2670 Mariane Springs",
+                    Address2 = "Apt. 244",
                     State = State.NC,
                     Zip = 27703
                 },
 
                 new BankAccount
                 {
-                    Name = "Demo Saings Account",
+                    Name = "Demo Savings Account",
                     Type = BankAccountType.savings,
                     HouseholdId = seedHouseId,
-                    StartingBalance = 1000,
-                    CurrentBalance = 1000,
-                    LowBalance = 200
+                    StartingBalance = 5000,
+                    CurrentBalance = 5000,
+                    LowBalance = 200,
+                    Address1 = "8854 Rowe Coves",
+                    Address2 = "Apt. 006",
+                    State = State.NC,
+                    Zip = 27713
+                },
+
+                new BankAccount
+                {
+                    Name = "Demo Savings Account",
+                    Type = BankAccountType.savings,
+                    HouseholdId = seedHouseId,
+                    StartingBalance = 5000,
+                    CurrentBalance = 5000,
+                    LowBalance = 200,
+                    Address1 = "8854 Rowe Coves",
+                    Address2 = "Apt. 006",
+                    State = State.NC,
+                    Zip = 27713
+                },
+
+                new BankAccount
+                {
+                    Name = "Demo Savings Account",
+                    Type = BankAccountType.savings,
+                    HouseholdId = seedHouseId,
+                    StartingBalance = 5000,
+                    CurrentBalance = 5000,
+                    LowBalance = 200,
+                    Address1 = "8854 Rowe Coves",
+                    Address2 = "Apt. 006",
+                    State = State.NC,
+                    Zip = 27713
                 }
                 ); ;
             #endregion
