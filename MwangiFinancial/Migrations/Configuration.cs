@@ -1,17 +1,15 @@
-using System;
-using System.Data.Entity.Migrations;
-using System.Linq;
-using System.Web.Configuration;
-using MwangiFinancial.Enumeration;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
-using MwangiFinancial.Models;
-using System.Data.Entity;
+namespace MwangiFinancial.Migrations
+{
+    using Microsoft.AspNet.Identity;
+    using Microsoft.AspNet.Identity.EntityFramework;
+    using MwangiFinancial.Models;
+    using System;
+    using System.Data.Entity;
+    using System.Data.Entity.Migrations;
+    using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration <ApplicationDbContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<MwangiFinancial.Models.ApplicationDbContext>
     {
-        //if(!System.Diagnostics.Debugger.IsAttached)
-        //System.Diagnostics.Debugger.Launch();
         public Configuration()
         {
             AutomaticMigrationsEnabled = true;
@@ -19,10 +17,9 @@ using System.Data.Entity;
 
         protected override void Seed(ApplicationDbContext context)
         {
-            //  This method will be called after migrating to the latest version.
+            //if (!System.Diagnostics.Debugger.IsAttached)
+            //    System.Diagnostics.Debugger.Launch();
 
-            //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
-            //  to avoid creating duplicate seed data.
 
             #region Roles creation
             var roleManager = new RoleManager<IdentityRole>(new RoleStore<IdentityRole>(context));
@@ -45,26 +42,24 @@ using System.Data.Entity;
             }
             #endregion
 
-            //This code introduces code that will allow me to create a few users
-            var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
-
             #region SeededLobbyAndDemoHouse           
 
             context.Households.AddOrUpdate(
                 h => h.Name,
                 new Household { Name = "The Lobby", Greeting = "Welcome to the lobby!", Created = DateTimeOffset.UtcNow.ToLocalTime() },
-                new Household { Name = "Demo Household", Greeting = "Welcome everyone!", Created = DateTimeOffset.UtcNow.ToLocalTime(), IsConfigured = true }
+                new Household { Name = "Demo Household", Greeting = "Welcome everyone to the Household!", Created = DateTimeOffset.UtcNow.ToLocalTime(), IsConfigured = true }
                 );
+            context.SaveChanges();
             #endregion
 
-            context.SaveChanges();
+            #region User Creation
+            //This code introduces code that will allow me to create a few users
+            var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
 
             var houses = context.Households.AsNoTracking();
-
             var seedHouseId = houses.FirstOrDefault(h => h.Name == "Demo Household").Id;
             var seedLobbyId = houses.FirstOrDefault(h => h.Name == "The Lobby").Id;
 
-            #region Seeding Admin
             //Seeding Admin
             if (!context.Users.Any(u => u.Email == "Admin@Mailinator.com"))
             {
@@ -79,11 +74,9 @@ using System.Data.Entity;
                     HouseholdId = seedLobbyId
                 }, "Admin@money");
             }
-            var adminId = userManager.FindByEmail("Admin@mailinator.com");
-            userManager.AddToRole(adminId.Id, "Admin");
-            #endregion
+            var adminId = userManager.FindByEmail("Admin@mailinator.com").Id;
+            userManager.AddToRole(adminId, "Admin");
 
-            #region SeedingHOH
             //Seeding Head of Household
             if (!context.Users.Any(u => u.Email == "mosesmwangi@mailinator.com"))
             {
@@ -98,11 +91,9 @@ using System.Data.Entity;
                     HouseholdId = seedHouseId
                 }, "Mwangi@money");
             }
-            var hoHouseId = userManager.FindByEmail("mosesmwangi@mailinator.com");
-            userManager.AddToRole(hoHouseId.Id, "HeadofHouse");
-            #endregion
-
-            #region SeedingMember
+            var hoHouseId = userManager.FindByEmail("mosesmwangi@mailinator.com").Id;
+            userManager.AddToRole(hoHouseId, "HeadofHouse");
+                        
             //Seeding Member
             if (!context.Users.Any(u => u.Email == "josephine@Mailinator.com"))
             {
@@ -115,14 +106,12 @@ using System.Data.Entity;
                     AvatarUrl = "/Uploads/pm-icon.png",
                     DisplayName = "The CFO",
                     HouseholdId = seedHouseId
-                    
+
                 }, "Josephine@money");
             }
-            var memberId = userManager.FindByEmail("josephine@mailinator.com");
-            userManager.AddToRole(memberId.Id, "Member");
-            #endregion
+            var memberId = userManager.FindByEmail("josephine@mailinator.com").Id;
+            userManager.AddToRole(memberId, "Member");
 
-            #region SeedingLobbyMemeber
             //Seeding Lobby Memeber
             if (!context.Users.Any(u => u.Email == "Zuri@Mailinator.com"))
             {
@@ -138,142 +127,215 @@ using System.Data.Entity;
 
                 }, "Zuri@money");
             }
-            var lobbyistId = userManager.FindByEmail("Zuri@mailinator.com");
-            userManager.AddToRole(lobbyistId.Id, "LobbyMember");
+            var lobbyistId = userManager.FindByEmail("Zuri@mailinator.com").Id;
+            userManager.AddToRole(lobbyistId, "LobbyMember");
+            context.SaveChanges();
             #endregion
-           
+
+            #region Seeding Account Types
+            context.AccountTypes.AddOrUpdate(
+                a => a.Type,
+                    new AccountType { Type = "Checking", Description = "Default Checking" },
+                    new AccountType { Type = "Savings", Description = "Default Saving" },
+                    new AccountType { Type = "Money Market", Description = "Default Money Market Account" }
+                );
+            context.SaveChanges();
+            #endregion
+
+            #region Seeding Transaction Types
+            context.TransactionTypes.AddOrUpdate(
+                a => a.Name,
+                    new TransactionType { Name = "Deposit", Decsription = "Deposit in an account" },
+                    new TransactionType { Name = "Withdrawal", Decsription = "Withdrawal from an account" },
+                    new TransactionType { Name = "Adjust Up", Decsription = "Adjustment Up" },
+                    new TransactionType { Name = "Adjust Down", Decsription = "Adjustment Down" }
+                );
+            context.SaveChanges();
+            #endregion
+
             #region Budget
             //creating budget categories
             context.MyBudget.AddOrUpdate(
                 b => b.BudgetName,
-                new Budget { BudgetName = "Bills", HouseholdId = seedHouseId, TargetAmount = 300 },
-                new Budget { BudgetName = "Food", HouseholdId = seedHouseId, TargetAmount = 400 },
-                new Budget { BudgetName = "Car Expenses", HouseholdId = seedHouseId, TargetAmount = 250 },
-                new Budget { BudgetName = "Home Maintenance", HouseholdId = seedHouseId, TargetAmount = 100 },
-                new Budget { BudgetName = "Subscriptions", HouseholdId = seedHouseId, TargetAmount = 80 },
-                new Budget { BudgetName = "Medical", HouseholdId = seedHouseId, TargetAmount = 200 },
-                new Budget { BudgetName = "Entertainment", HouseholdId = seedHouseId, TargetAmount = 250 },
-                new Budget { BudgetName = "Miscellaneous", HouseholdId = seedHouseId, TargetAmount = 250 }
+                new Budget { BudgetName = "Bills", HouseholdId = seedHouseId, TargetAmount = 300.00 },
+                new Budget { BudgetName = "Food", HouseholdId = seedHouseId, TargetAmount = 400.00 },
+                new Budget { BudgetName = "Car Expenses", HouseholdId = seedHouseId, TargetAmount = 250.00 },
+                new Budget { BudgetName = "Home Maintenance", HouseholdId = seedHouseId, TargetAmount = 100.00 },
+                new Budget { BudgetName = "Subscriptions", HouseholdId = seedHouseId, TargetAmount = 80.00 },
+                new Budget { BudgetName = "Medical", HouseholdId = seedHouseId, TargetAmount = 200.00 },
+                new Budget { BudgetName = "Entertainment", HouseholdId = seedHouseId, TargetAmount = 250.00 },
+                new Budget { BudgetName = "Miscellaneous", HouseholdId = seedHouseId, TargetAmount = 250.00 }
                 );
+            context.SaveChanges();
             #endregion
 
             #region BudgetItems
-            //Instantiation
-            context.SaveChanges();
-
             var budgets = context.MyBudget.AsNoTracking();
 
             var BillsId = budgets.FirstOrDefault(b => b.BudgetName == "Bills").Id;
             var FoodId = budgets.FirstOrDefault(b => b.BudgetName == "Food").Id;
             var CarId = budgets.FirstOrDefault(b => b.BudgetName == "Bills").Id;
-            var HomeMaintenanceId = budgets.FirstOrDefault(b => b.BudgetName == "Car Expenses").Id;
-            var Medical = budgets.FirstOrDefault(b => b.BudgetName == "Home Maintenance").Id;
-            var Entertainment = budgets.FirstOrDefault(b => b.BudgetName == "Medical").Id;
-            var Miscellaneous = budgets.FirstOrDefault(b => b.BudgetName == "Entertainment").Id;
-
+            
             //seeding
             context.BudgetItems.AddOrUpdate(
-                b =>b.ItemName,
-                new BudgetItem { ItemName = "Gas Bill", BudgetId = BillsId , },
-                new BudgetItem { ItemName = "Electric Bill", BudgetId = BillsId },               
-                new BudgetItem { ItemName = "Water Bill", BudgetId = BillsId },
-                new BudgetItem { ItemName = "Internet/Phone Bill", BudgetId = BillsId },
-                new BudgetItem { ItemName = "Cellphone Bill", BudgetId = BillsId },
-                new BudgetItem { ItemName = "Groceries", BudgetId = FoodId },
-                new BudgetItem { ItemName = "Wine/Beer/Liquor", BudgetId = FoodId },
-                new BudgetItem { ItemName = "Restaurant", BudgetId = FoodId },
-                new BudgetItem { ItemName = "Takeout", BudgetId = FoodId },
-                new BudgetItem { ItemName = "Gasoline Bill", BudgetId = CarId },
-                new BudgetItem { ItemName = "Oil Change/Lubricants", BudgetId = CarId },
-                new BudgetItem { ItemName = "Tires/Brakes", BudgetId = CarId },
-                new BudgetItem { ItemName = "Wiper/Coolant/WasherFluid", BudgetId = CarId },
-                new BudgetItem { ItemName = "AC Mainteance", BudgetId = HomeMaintenanceId },
-                new BudgetItem { ItemName = "Lawn Cutting", BudgetId = HomeMaintenanceId },
-                new BudgetItem { ItemName = "General House Maintenance", BudgetId = HomeMaintenanceId },
-                new BudgetItem { ItemName = "Doctor Visit", BudgetId = Medical },
-                new BudgetItem { ItemName = "Prescritions", BudgetId = Medical },
-                new BudgetItem { ItemName = "Remedies", BudgetId = Medical },
-                new BudgetItem { ItemName = "Movie Night", BudgetId = Entertainment },
-                new BudgetItem { ItemName = "Girls Night Out", BudgetId = Entertainment },
-                new BudgetItem { ItemName = "Entertaining", BudgetId = Entertainment },
-                new BudgetItem { ItemName = "Boys Night out", BudgetId = Entertainment },
-                new BudgetItem { ItemName = "Tithe", BudgetId = Miscellaneous },
-                new BudgetItem { ItemName = "School supplies/Office Supplies", BudgetId = Miscellaneous },
-                new BudgetItem { ItemName = "Camera Supplies", BudgetId = Miscellaneous }
+                b => b.ItemName,
+                new BudgetItem { ItemName = "Gas Bill", BudgetId = BillsId, Created = DateTimeOffset.Now, Target = 120.00 },
+                new BudgetItem { ItemName = "Electric Bill", BudgetId = BillsId,Created = DateTimeOffset.Now, Target = 100.00 },
+                new BudgetItem { ItemName = "Water Bill", BudgetId = BillsId, Created = DateTimeOffset.Now, Target = 45.00 },
+                new BudgetItem { ItemName = "Internet/Phone Bill", BudgetId = BillsId, Created = DateTimeOffset.Now, Target = 80.00 },
+                new BudgetItem { ItemName = "Cellphone Bill", BudgetId = BillsId, Created = DateTimeOffset.Now, Target = 65.00 },
+                new BudgetItem { ItemName = "Groceries", BudgetId = FoodId, Created = DateTimeOffset.Now, Target = 300.00 },
+                new BudgetItem { ItemName = "Wine/Beer/Liquor", BudgetId = FoodId, Created = DateTimeOffset.Now, Target = 100.00 },
+                new BudgetItem { ItemName = "Restaurant", BudgetId = FoodId, Created = DateTimeOffset.Now, Target = 200.00 },
+                new BudgetItem { ItemName = "Takeout", BudgetId = FoodId, Created = DateTimeOffset.Now, Target = 50.00 },
+                new BudgetItem { ItemName = "Gasoline Bill", BudgetId = CarId, Created = DateTimeOffset.Now, Target = 300.00 }
                 );
+
+            context.SaveChanges();
             #endregion               
 
-            #region Transaction
-            context.Transactions.AddOrUpdate(
-                new Transaction { Type = TransactionType.BankDraft, Amount = 200, Description = "To Buy stuff for Moving", Created = DateTimeOffset.Now },
-                new Transaction { Type = TransactionType.Deposit, Amount = 1500, Description = "PayDay", Created = DateTimeOffset.Now },
-                new Transaction { Type = TransactionType.Payment, Amount = 700, Description = "Mortgage", Created = DateTimeOffset.Now },
-                new Transaction { Type = TransactionType.Withdrawal, Amount = 100, Description = "Groceries", Created = DateTimeOffset.Now }
-                );
-            #endregion
-
             #region BankAccount
+            var accountTypes = context.AccountTypes.AsNoTracking();
+
             //seeding a demo account
             context.BankAccounts.AddOrUpdate(
                 c => c.Name,
                 new BankAccount
                 {
-                    Name = "Bb&t Checking Account",                 
-                    Type = BankAccountType.Checkings,
+                    Name = "Bb&t Checking Account",
                     HouseholdId = seedHouseId,
-                    StartingBalance = 5000,
-                    CurrentBalance = 1000,
-                    LowBalance = 200,
+                    StartingBalance = 5000.00,
+                    CurrentBalance = 1000.00,
+                    AccountTypeId = accountTypes.FirstOrDefault(a => a.Type == "Checking").Id,
+                    Created = DateTimeOffset.Now,
+                    Description = "This is the seeded Checking Account",
+                    LowBalance = 100.00,
+                    OwnerUserId = hoHouseId,
                     Address1 = "2670 Mariane Springs",
                     Address2 = "Apt. 244",
-                    State = State.NC,
-                    Zip = 27703
+                    State = Enumeration.State.NC,
+                    Zip = "27713"
                 },
 
                 new BankAccount
                 {
-                    Name = "Demo Savings Account",
-                    Type = BankAccountType.savings,
+                    Name = "Coastal Savings Account",
                     HouseholdId = seedHouseId,
-                    StartingBalance = 5000,
-                    CurrentBalance = 5000,
-                    LowBalance = 200,
+                    StartingBalance = 5000.00,
+                    CurrentBalance = 5000.00,
+                    AccountTypeId = accountTypes.FirstOrDefault(a => a.Type == "Savings").Id,
+                    Created = DateTimeOffset.Now,
+                    Description = "This is the another seeded Checking Account",
+                    LowBalance = 200.00,
+                    OwnerUserId = hoHouseId,
                     Address1 = "8854 Rowe Coves",
                     Address2 = "Apt. 006",
-                    State = State.NC,
-                    Zip = 27713
-                },
-
-                new BankAccount
-                {
-                    Name = "Demo Savings Account",
-                    Type = BankAccountType.savings,
-                    HouseholdId = seedHouseId,
-                    StartingBalance = 5000,
-                    CurrentBalance = 5000,
-                    LowBalance = 200,
-                    Address1 = "8854 Rowe Coves",
-                    Address2 = "Apt. 006",
-                    State = State.NC,
-                    Zip = 27713
-                },
-
-                new BankAccount
-                {
-                    Name = "Demo Savings Account",
-                    Type = BankAccountType.savings,
-                    HouseholdId = seedHouseId,
-                    StartingBalance = 5000,
-                    CurrentBalance = 5000,
-                    LowBalance = 200,
-                    Address1 = "8854 Rowe Coves",
-                    Address2 = "Apt. 006",
-                    State = State.NC,
-                    Zip = 27713
+                    State = Enumeration.State.NC,
+                    Zip = "27703"
                 }
+                );               
+            context.SaveChanges();
+            #endregion
+
+            #region Seed Transactions
+            var budgetItems = context.BudgetItems.AsNoTracking();
+
+            var gasBudgetItemId = budgetItems.FirstOrDefault(b => b.ItemName == "Gas Bill").Id;
+            var electricBudgetItemId = budgetItems.FirstOrDefault(b => b.ItemName == "Electric Bill").Id;
+            var waterBudgetItemId = budgetItems.FirstOrDefault(b => b.ItemName == "Water Bill").Id;
+            var phoneBudgetItemId = budgetItems.FirstOrDefault(b => b.ItemName == "Internet/Phone Bill").Id;
+            var cellphoneBudgetItemId = budgetItems.FirstOrDefault(b => b.ItemName == "Cellphone Bill").Id;
+            var groceriesBudgetItemId = budgetItems.FirstOrDefault(b => b.ItemName == "Groceries").Id;
+
+            var checkingAccountId = accountTypes.FirstOrDefault(a => a.Type == "Checking").Id;
+            var savingsAccountId = accountTypes.FirstOrDefault(a => a.Type == "savings").Id;
+
+            var transactionTypes = context.TransactionTypes.AsNoTracking();
+            var depositTransactionType = transactionTypes.FirstOrDefault(t => t.Name == "Deposit").Id;
+            var withdrawalTransactionType = transactionTypes.FirstOrDefault(t => t.Name == "Withdrawal").Id;
+            
+            context.Transactions.AddOrUpdate(
+                t => t.Payee,
+                    new Transaction
+                    {
+                        BankAccountId = checkingAccountId,
+                        BudgetItemId = gasBudgetItemId,
+                        EnteredById = hoHouseId,
+                        TransactionTypeId = withdrawalTransactionType,                       
+                        Amount = 200.00,
+                        Description = "To Buy stuff for Moving",
+                        Created = DateTimeOffset.Now
+                    },
+
+                    new Transaction
+                    {
+                        BankAccountId = checkingAccountId,
+                        BudgetItemId = waterBudgetItemId,
+                        EnteredById = hoHouseId,
+                        TransactionTypeId = withdrawalTransactionType,
+                        Amount = 200.00,
+                        Description = "To Buy stuff for Moving",
+                        Created = DateTimeOffset.Now
+                    },
+
+                    new Transaction
+                    {
+                        BankAccountId = checkingAccountId,
+                        BudgetItemId = phoneBudgetItemId,
+                        EnteredById = hoHouseId,
+                        TransactionTypeId = withdrawalTransactionType,
+                        Amount = 200,
+                        Description = "To Buy stuff for Moving",
+                        Created = DateTimeOffset.Now
+                    },
+
+                    new Transaction
+                    {
+                        BankAccountId = checkingAccountId,
+                        BudgetItemId = cellphoneBudgetItemId,
+                        EnteredById = hoHouseId,
+                        TransactionTypeId = withdrawalTransactionType,
+                        Amount = 200,
+                        Description = "To Buy stuff for Moving",
+                        Created = DateTimeOffset.Now
+                    },
+
+                    new Transaction
+                    {
+                        BankAccountId = checkingAccountId,
+                        BudgetItemId = electricBudgetItemId,
+                        EnteredById = hoHouseId,
+                        TransactionTypeId = withdrawalTransactionType,
+                        Amount = 200,
+                        Description = "To Buy stuff for Moving",
+                        Created = DateTimeOffset.Now
+                    },
+
+                    new Transaction
+                    {
+                        BankAccountId = checkingAccountId,
+                        BudgetItemId = groceriesBudgetItemId,
+                        EnteredById = hoHouseId,
+                        TransactionTypeId = withdrawalTransactionType,
+                        Amount = 200,
+                        Description = "To Buy stuff for Moving",
+                        Created = DateTimeOffset.Now
+                    },
+
+                    new Transaction
+                    {
+                        BankAccountId = savingsAccountId,
+                        BudgetItemId = null,
+                        EnteredById = hoHouseId,
+                        TransactionTypeId = depositTransactionType,
+                        Amount = 500.00,
+                        Created = DateTimeOffset.Now,
+                        Description = "Automated monthly Saving transer"
+                    }
+
                 );
+            context.SaveChanges();
             #endregion
         }
     }
-
-
+}

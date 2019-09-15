@@ -15,25 +15,22 @@ namespace MwangiFinancial.Models
         //Foreign Key
         public int? BankAccountId { get; set; }
         public int? BudgetItemId { get; set; }
+        public int? TransactionTypeId { get; set; }
         public string EnteredById { get; set; }
 
-        //Enum Reference
-        public TransactionType Type { get; set; }
 
-        //Structure
-        [Display(Name = "Low Balance Level")]
-        [Range(0.0, 10000000)]
-        public decimal Amount { get; set; }
+        
+        //Structure        
+        public double Amount { get; set; }
         public string Payee { get; set; }
         public string Description { get; set; }
         public DateTimeOffset Created { get; set; }
         public bool Reconciled { get; set; }
         public DateTimeOffset? ReconciledDate { get; set; }
 
-        //virtual Nav to Parents Bank Account, BudgetItem and Application User
+        //virtual Nav to Parents Bank Account, BudgetItem, TransactionType and Application User
         public virtual BankAccount BankAccount { get; set; }
         public virtual BudgetItem BudgetItem { get; set; }
         public virtual ApplicationUser EnteredBy { get; set; }
-
     }
 }

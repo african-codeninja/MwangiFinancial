@@ -18,7 +18,7 @@ namespace MwangiFinancial.Models
         [Display(Name = "Budget Name")]
         public string BudgetName { get; set; }
         [Display(Name = "Target Amount")]
-        public decimal TargetAmount { get; set; }
+        public double TargetAmount { get; set; }
 
         //Virtual Nav to Parent
         public virtual Household Household { get; set; }

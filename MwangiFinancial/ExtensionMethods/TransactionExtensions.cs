@@ -11,11 +11,11 @@ namespace MwangiFinancial.ExtensionMethods
     {
         private static ApplicationDbContext db = new ApplicationDbContext();
 
-        public static void UpdateAccountBalance(this Transaction transaction)
+        public static void UpdateAccountBalance(this Transaction transaction, TransactionType transactionType)
         {
             //Get Bank Account
             var account = db.BankAccounts.Find(transaction.BankAccountId);
-            if (transaction.Type.ToString() == "Withdrawal" || transaction.Type.ToString() == "Adjustment down")
+            if (transactionType.Name.ToString() == "Withdrawal" || transactionType.Name.ToString() == "Adjustment down")
                 account.CurrentBalance -= transaction.Amount;
             else
                 account.CurrentBalance += transaction.Amount;
@@ -23,11 +23,11 @@ namespace MwangiFinancial.ExtensionMethods
             db.SaveChanges();
         }
 
-        public static void RevertAccountBalance(this Transaction transaction)
+        public static void RevertAccountBalance(this Transaction transaction, TransactionType transactionType)
         {
             //Get Bank Account
             var account = db.BankAccounts.Find(transaction.BankAccountId);
-            if (transaction.Type.ToString() == "Withdrawal" || transaction.Type.ToString() == "Adjustment down")
+            if (transactionType.Name.ToString() == "Withdrawal" || transactionType.Name.ToString() == "Adjustment down")
                 account.CurrentBalance += transaction.Amount;
             else
                 account.CurrentBalance -= transaction.Amount;
@@ -49,7 +49,7 @@ namespace MwangiFinancial.ExtensionMethods
             var notification = new Notification
             {
                 Created = DateTimeOffset.UtcNow.ToLocalTime(),
-                HouseholdId = account.OwnerUserId,
+                HouseholdId = account.HouseholdId,
                 NotificationBody = $"Your account '{account.Name}' has been overdrafted. Your most recent transaction in the amount of ${transaction.Amount} has resulted in a balance of ${account.CurrentBalance}.",
                 NotificationType = NotificationType.Overdraft
             };
@@ -62,7 +62,7 @@ namespace MwangiFinancial.ExtensionMethods
             var notification = new Notification
             {
                 Created = DateTimeOffset.UtcNow.ToLocalTime(),
-                HouseholdId = account.OwnerUserId,
+                HouseholdId = account.HouseholdId,
                 NotificationBody = $"Your account '{account.Name}' has reached it's low-level balance. Your most recent transaction in the amount of ${transaction.Amount} has resulted in a balance of ${account.CurrentBalance}.",
                 NotificationType = NotificationType.LowBudget
             };

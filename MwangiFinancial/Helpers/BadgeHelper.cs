@@ -27,29 +27,29 @@ namespace MwangiFinancial.Helpers
         public static int CategoriesOverBudget(DashboardViewModel dbvm)
         {
             var tally = 0;
-            foreach (var category in db.MyBudget.Where(i => i.HouseholdId == dbvm.Household.Id).ToList())
-            {
-                decimal total = 0;
-                foreach (var categoryitem in category.BudgetItems.ToList())
-                {
-                    var aMonthAgo = DateTimeOffset.UtcNow.ToLocalTime().AddMonths(-1);
-                    foreach (var transaction in db.Transactions.Where(t => t.BudgetItemId == categoryitem.Id && t.Created > aMonthAgo).ToList())
-                    {
-                        if (transaction.Type == Enumeration.TransactionType.AdjustDown || transaction.Type == Enumeration.TransactionType.Withdrawal)
-                        {
-                            total += transaction.Amount;
-                        }
-                        else
-                        {
-                            total -= transaction.Amount;
-                        }
-                    }
-                }
-                if (total > category.TargetAmount)
-                {
-                    tally += 1;
-                }              
-            }
+            //foreach (var category in db.MyBudget.Where(i => i.HouseholdId == dbvm.Household.Id).ToList())
+            //{
+            //    decimal total = 0;
+            //    foreach (var categoryitem in category.BudgetItems.ToList())
+            //    {
+            //        var aMonthAgo = DateTimeOffset.UtcNow.ToLocalTime().AddMonths(-1);
+            //        foreach (var transaction in db.Transactions.Where(t => t.BudgetItemId == categoryitem.Id && t.Created > aMonthAgo).ToList())
+            //        {
+            //            if (transaction.TransactionType == TransactionType.AdjustDown || transaction.TransactionType == TransactionType.Withdrawal)
+            //            {
+            //                total += transaction.Amount;
+            //            }
+            //            else
+            //            {
+            //                total -= transaction.Amount;
+            //            }
+            //        }
+            //    }
+            //    if (total > category.TargetAmount)
+            //    {
+            //        tally += 1;
+            //    }              
+            //}
             return tally;
         }
     }

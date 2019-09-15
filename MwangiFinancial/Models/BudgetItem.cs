@@ -16,6 +16,8 @@ namespace MwangiFinancial.Models
 
         //Structure
         public string ItemName { get; set; }
+        public DateTimeOffset Created { get; set;}
+        public double Target { get; set; }
 
         //Navigation to parent
         public virtual Budget Budget { get; set; }

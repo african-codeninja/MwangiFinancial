@@ -13,7 +13,7 @@ namespace MwangiFinancial.Models
         public int Id { get; set; }
 
         //Foreign Key
-        public string HouseholdId { get; set; }
+        public int HouseholdId { get; set; }
 
         //Structure
         public string NotificationBody { get; set; }

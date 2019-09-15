@@ -7,117 +7,115 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using MwangiFinancial.Models;
-using MwangiFinancial.Enumeration;
 
 namespace MwangiFinancial.Controllers
 {
-    public class NotificationsController : Controller
+    public class TransactionTypesController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        // GET: Notifications
-        [Authorize(Roles = "HeadOfHouse")]
+        // GET: TransactionTypes
         public ActionResult Index()
         {
-            var notifications = db.Notifications.Include(n => n.Created);
-            return View(notifications.ToList());
+            var transactionTypes = db.TransactionTypes.Include(t => t.Transaction);
+            return View(transactionTypes.ToList());
         }
 
-        // GET: Notifications/Details/5
+        // GET: TransactionTypes/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Notification notification = db.Notifications.Find(id);
-            if (notification == null)
+            TransactionType transactionType = db.TransactionTypes.Find(id);
+            if (transactionType == null)
             {
                 return HttpNotFound();
             }
-            return View(notification);
+            return View(transactionType);
         }
 
-        // GET: Notifications/Create
+        // GET: TransactionTypes/Create
         public ActionResult Create()
         {
-            ViewBag.CreatorId = new SelectList(db.Users, "Id", "FirstName");
+            ViewBag.TransactionId = new SelectList(db.Transactions, "Id", "EnteredById");
             return View();
         }
 
-        // POST: Notifications/Create
+        // POST: TransactionTypes/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,CreatorId,Created,Subject,NotificationBody,Read")] Notification notification)
+        public ActionResult Create([Bind(Include = "Id,TransactionId,Name,Decsription")] TransactionType transactionType)
         {
             if (ModelState.IsValid)
             {
-                db.Notifications.Add(notification);
+                db.TransactionTypes.Add(transactionType);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.CreatorId = new SelectList(db.Users, "Id", "FirstName", notification.HouseholdId);
-            return View(notification);
+            ViewBag.TransactionId = new SelectList(db.Transactions, "Id", "EnteredById", transactionType.TransactionId);
+            return View(transactionType);
         }
 
-        // GET: Notifications/Edit/5
+        // GET: TransactionTypes/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Notification notification = db.Notifications.Find(id);
-            if (notification == null)
+            TransactionType transactionType = db.TransactionTypes.Find(id);
+            if (transactionType == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.CreatorId = new SelectList(db.Users, "Id", "FirstName", notification.HouseholdId);
-            return View(notification);
+            ViewBag.TransactionId = new SelectList(db.Transactions, "Id", "EnteredById", transactionType.TransactionId);
+            return View(transactionType);
         }
 
-        // POST: Notifications/Edit/5
+        // POST: TransactionTypes/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,CreatorId,Created,Subject,NotificationBody,Read")] Notification notification)
+        public ActionResult Edit([Bind(Include = "Id,TransactionId,Name,Decsription")] TransactionType transactionType)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(notification).State = EntityState.Modified;
+                db.Entry(transactionType).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.CreatorId = new SelectList(db.Users, "Id", "FirstName", notification.HouseholdId);
-            return View(notification);
+            ViewBag.TransactionId = new SelectList(db.Transactions, "Id", "EnteredById", transactionType.TransactionId);
+            return View(transactionType);
         }
 
-        // GET: Notifications/Delete/5
+        // GET: TransactionTypes/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Notification notification = db.Notifications.Find(id);
-            if (notification == null)
+            TransactionType transactionType = db.TransactionTypes.Find(id);
+            if (transactionType == null)
             {
                 return HttpNotFound();
             }
-            return View(notification);
+            return View(transactionType);
         }
 
-        // POST: Notifications/Delete/5
+        // POST: TransactionTypes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Notification notification = db.Notifications.Find(id);
-            db.Notifications.Remove(notification);
+            TransactionType transactionType = db.TransactionTypes.Find(id);
+            db.TransactionTypes.Remove(transactionType);
             db.SaveChanges();
             return RedirectToAction("Index");
         }

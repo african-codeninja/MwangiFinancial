@@ -12,7 +12,7 @@ namespace MwangiFinancial.ViewModels
         public Household Household = new Household();
         //needed for form submission
         public BankAccount BankAccount = new BankAccount();
-        public Budget Budget = new Budget();
+        public Budget budget = new Budget();
         public BudgetItem BudgetItem = new BudgetItem();
     }
 }

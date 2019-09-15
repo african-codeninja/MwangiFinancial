@@ -12,6 +12,6 @@ namespace MwangiFinancial.ViewModels
         public IndexViewModel IndexViewModel { get; set; }
         public UserViewModel UserViewModel { get; set; }
         public ChangePasswordViewModel ChangePasswordViewModel { get; set; }
-        public BankAccountType AccountType { get; set; }
+        public AccountType AccountType { get; set; }
     }
 }

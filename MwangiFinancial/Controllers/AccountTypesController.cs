@@ -7,117 +7,115 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using MwangiFinancial.Models;
-using MwangiFinancial.Enumeration;
 
 namespace MwangiFinancial.Controllers
 {
-    public class NotificationsController : Controller
+    public class AccountTypesController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
-        // GET: Notifications
-        [Authorize(Roles = "HeadOfHouse")]
+        // GET: AccountTypes
         public ActionResult Index()
         {
-            var notifications = db.Notifications.Include(n => n.Created);
-            return View(notifications.ToList());
+            var accountTypes = db.AccountTypes.Include(a => a.BankAccount);
+            return View(accountTypes.ToList());
         }
 
-        // GET: Notifications/Details/5
+        // GET: AccountTypes/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Notification notification = db.Notifications.Find(id);
-            if (notification == null)
+            AccountType accountType = db.AccountTypes.Find(id);
+            if (accountType == null)
             {
                 return HttpNotFound();
             }
-            return View(notification);
+            return View(accountType);
         }
 
-        // GET: Notifications/Create
+        // GET: AccountTypes/Create
         public ActionResult Create()
         {
-            ViewBag.CreatorId = new SelectList(db.Users, "Id", "FirstName");
+            ViewBag.BankAccountId = new SelectList(db.BankAccounts, "Id", "OwnerUserId");
             return View();
         }
 
-        // POST: Notifications/Create
+        // POST: AccountTypes/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,CreatorId,Created,Subject,NotificationBody,Read")] Notification notification)
+        public ActionResult Create([Bind(Include = "id,BankAccountId,Description")] AccountType accountType)
         {
             if (ModelState.IsValid)
             {
-                db.Notifications.Add(notification);
+                db.AccountTypes.Add(accountType);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.CreatorId = new SelectList(db.Users, "Id", "FirstName", notification.HouseholdId);
-            return View(notification);
+            ViewBag.BankAccountId = new SelectList(db.BankAccounts, "Id", "OwnerUserId", accountType.BankAccountId);
+            return View(accountType);
         }
 
-        // GET: Notifications/Edit/5
+        // GET: AccountTypes/Edit/5
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Notification notification = db.Notifications.Find(id);
-            if (notification == null)
+            AccountType accountType = db.AccountTypes.Find(id);
+            if (accountType == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.CreatorId = new SelectList(db.Users, "Id", "FirstName", notification.HouseholdId);
-            return View(notification);
+            ViewBag.BankAccountId = new SelectList(db.BankAccounts, "Id", "OwnerUserId", accountType.BankAccountId);
+            return View(accountType);
         }
 
-        // POST: Notifications/Edit/5
+        // POST: AccountTypes/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,CreatorId,Created,Subject,NotificationBody,Read")] Notification notification)
+        public ActionResult Edit([Bind(Include = "id,BankAccountId,Description")] AccountType accountType)
         {
             if (ModelState.IsValid)
             {
-                db.Entry(notification).State = EntityState.Modified;
+                db.Entry(accountType).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.CreatorId = new SelectList(db.Users, "Id", "FirstName", notification.HouseholdId);
-            return View(notification);
+            ViewBag.BankAccountId = new SelectList(db.BankAccounts, "Id", "OwnerUserId", accountType.BankAccountId);
+            return View(accountType);
         }
 
-        // GET: Notifications/Delete/5
+        // GET: AccountTypes/Delete/5
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Notification notification = db.Notifications.Find(id);
-            if (notification == null)
+            AccountType accountType = db.AccountTypes.Find(id);
+            if (accountType == null)
             {
                 return HttpNotFound();
             }
-            return View(notification);
+            return View(accountType);
         }
 
-        // POST: Notifications/Delete/5
+        // POST: AccountTypes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Notification notification = db.Notifications.Find(id);
-            db.Notifications.Remove(notification);
+            AccountType accountType = db.AccountTypes.Find(id);
+            db.AccountTypes.Remove(accountType);
             db.SaveChanges();
             return RedirectToAction("Index");
         }
