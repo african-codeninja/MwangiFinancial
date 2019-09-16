@@ -78,6 +78,10 @@ namespace MwangiFinancial.Models
         [Display(Name = "Last Name")]
         public string LastName { get; set; }
 
+        [MaxLength(40, ErrorMessage = "Display Name cannot be greater than 40 characters")]
+        [Display(Name = "Display Name")]
+        public string DisplayName { get; set; }
+
         [Required]
         [EmailAddress]
         [Display(Name = "Email")]

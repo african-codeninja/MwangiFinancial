@@ -57,6 +57,7 @@ namespace MwangiFinancial.Migrations
             var userManager = new UserManager<ApplicationUser>(new UserStore<ApplicationUser>(context));
 
             var houses = context.Households.AsNoTracking();
+
             var seedHouseId = houses.FirstOrDefault(h => h.Name == "Demo Household").Id;
             var seedLobbyId = houses.FirstOrDefault(h => h.Name == "The Lobby").Id;
 

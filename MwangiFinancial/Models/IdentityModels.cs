@@ -24,9 +24,11 @@ namespace MwangiFinancial.Models
         [MaxLength(40, ErrorMessage = "Last Name cannot be greater than 40 characters")]
         [Display(Name = "Last Name")]
         public string LastName { get; set; }
+
         [MaxLength(40, ErrorMessage = "Display Name cannot be greater than 40 characters")]
         [Display(Name = "Display Name")]
         public string DisplayName { get; set; }
+
         [Display(Name = "Avatar path")]
         public string AvatarUrl { get; set; }
 

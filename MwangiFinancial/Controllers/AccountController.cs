@@ -96,17 +96,17 @@ namespace MwangiFinancial.Controllers
                     {
                         var currentUserId = db.Users.FirstOrDefault(u => u.Email == model.Email).Id;
                         var currentUserRole = roleHelper.ListUserRoles(currentUserId).FirstOrDefault();
-                        if (currentUserRole == "LobbyMember")
+                        if (currentUserRole == "Member")
                         {
                             return RedirectToAction("Lobby", "Home");
                         }
-                        else if (currentUserRole == "HeadOfHouse" || currentUserRole == "Resident")
+                        else if (currentUserRole == "HeadofHouse" || currentUserRole == "Member")
                         {
                             return RedirectToAction("Dashboard", "Households");
                         }
                         else if (currentUserRole == "Admin")
                         {
-                            return RedirectToAction("Dashboard", "Admin");
+                            return RedirectToAction("Index", "Manage");
                         }
                         else
                         {
@@ -185,11 +185,13 @@ namespace MwangiFinancial.Controllers
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser {
+                    HouseholdId = db.Households.Where(h => h.Name == "The Lobby").FirstOrDefault().Id,
                     FirstName = model.FirstName,
                     LastName = model.LastName,
+                    DisplayName = model.DisplayName,
                     UserName = model.Email,
                     Email = model.Email,
-                    HouseholdId = db.Households.Where(h => h.Name == "The Lobby").FirstOrDefault().Id
+                    AvatarUrl = "/Uploads/default-avatar.png"
                 };
 
                 if (model.AvatarUrl != null)
@@ -200,11 +202,6 @@ namespace MwangiFinancial.Controllers
                         model.AvatarUrl.SaveAs(Path.Combine(Server.MapPath("~/Uploads/"), fileName));
                         user.AvatarUrl = "/Uploads/" + fileName;
                     }
-
-                }
-                else
-                {
-                    user.AvatarUrl = "/Uploads/default-avatar.png";
                 }
 
                 var result = await UserManager.CreateAsync(user, model.Password);
@@ -222,7 +219,6 @@ namespace MwangiFinancial.Controllers
                 }
                 AddErrors(result);
             }
-
             // If we got this far, something failed, redisplay form
             return View(model);
         }

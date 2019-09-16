@@ -6,8 +6,10 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.AspNet.Identity;
 using MwangiFinancial.Helpers;
 using MwangiFinancial.Models;
+using MwangiFinancial.ViewModels;
 
 namespace MwangiFinancial.Controllers
 {
@@ -17,13 +19,28 @@ namespace MwangiFinancial.Controllers
         private RoleHelper roleHelper = new RoleHelper();
         private HouseholdHelper householdHelper = new HouseholdHelper();
 
-        // GET: Households
+                // GET: Households
+        [Authorize(Roles = "Admin")]
         public ActionResult Index()
         {
             return View(db.Households.ToList());
         }
 
-        //
+        //Dashboard for households
+
+        // GET: Households Dashboard
+        [Authorize(Roles = "HeadofHouse, Member")]
+        public ActionResult Dashboard()
+        {
+            var userId = User.Identity.GetUserId();
+            var houseId = db.Users.AsNoTracking().FirstOrDefault(u => u.Id == userId).HouseholdId;
+            var dashboardVM = new DashboardViewModel();
+            dashboardVM.Household = db.Households.Find(houseId);
+            return View(dashboardVM);
+        }
+
+        
+    
 
         // GET: Households/Details/5
         public ActionResult Details(int? id)
