@@ -36,13 +36,13 @@ namespace MwangiFinancial.Helpers
             return userManager.GetRoles(userId);
         }
 
-        public bool AddUserToRole(string userId, AppRole roleName)
+        public bool AddUserToRole(string userId, string roleName)
         {
             var result = userManager.AddToRole(userId, roleName.ToString());
             return result.Succeeded;
         }
 
-        public bool RemoveUserFromRole(string userId, AppRole roleName)
+        public bool RemoveUserFromRole(string userId, string roleName)
         {
             var result = userManager.RemoveFromRole(userId, roleName.ToString());
             return result.Succeeded;
