@@ -16,17 +16,17 @@ namespace MwangiFinancial.Helpers
         {
             var user = db.Users.Find(userId);
             user.HouseholdId = db.Households.FirstOrDefault(h => h.Name == "The Lobby").Id;
-            roleHelper.RemoveUserFromRole(userId, AppRole.Resident);
-            roleHelper.AddUserToRole(userId, AppRole.Lobbyist);
+            roleHelper.RemoveUserFromRole(userId, "Member");
+            roleHelper.AddUserToRole(userId, "LobbyMember");
             db.SaveChanges();
         }
 
         public void PromoteToHOH(string userId, string targetUserId)
         {
-            roleHelper.RemoveUserFromRole(userId, AppRole.HeadOfHouse);
-            roleHelper.AddUserToRole(userId, AppRole.Resident);
-            roleHelper.RemoveUserFromRole(targetUserId, AppRole.Resident);
-            roleHelper.AddUserToRole(targetUserId, AppRole.HeadOfHouse);
+            roleHelper.RemoveUserFromRole(userId, "HeadofHouse" );
+            roleHelper.AddUserToRole(userId, "Member");
+            roleHelper.RemoveUserFromRole(targetUserId, "Member");
+            roleHelper.AddUserToRole(targetUserId, "HeadofHouse");
             db.SaveChanges();
         }
     }
