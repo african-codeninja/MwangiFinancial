@@ -180,10 +180,13 @@ namespace MwangiFinancial.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Register(RegisterViewModel model, HttpPostedFileBase image)
+        public async Task<ActionResult> Register(RegisterViewModel model, HttpPostedFileBase image, int householdId, Guid code)
         {
             if (ModelState.IsValid)
             {
+                if (householdId == 0)
+                    householdId = db.Households.FirstOrDefault(h => h.Name == "The Lobby").Id;
+
                 var user = new ApplicationUser {
                     HouseholdId = db.Households.Where(h => h.Name == "The Lobby").FirstOrDefault().Id,
                     FirstName = model.FirstName,
@@ -207,15 +210,17 @@ namespace MwangiFinancial.Controllers
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
-                    // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
-                    // Send an email with this link
-                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
-
-                    return RedirectToAction("Index", "Home");
+                    //Here is where I want to either assign them the Role of Member or Lobbyist
+                    //Depending on whether or not they are accepting an invite or just registering
+                    if (code == new Guid())
+                        roleHelper.AddUserToRole(user.Id,"LobbyMemebr");
+                    else
+                    {
+                        var invitation = db.Invitations.FirstOrDefault(i => i.Code == code);
+                        invitation.used = false;
+                        db.SaveChanges();
+                    }
+                    return RedirectToAction("Lobby", "Home");
                 }
                 AddErrors(result);
             }
@@ -275,7 +280,7 @@ namespace MwangiFinancial.Controllers
                     {
                         invite.used = true;
                         db.SaveChanges();
-                        roleHelper.AddUserToRole(user.Id, AppRole.Resident);
+                        roleHelper.AddUserToRole(user.Id, "member");
                         await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
 
                         // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
@@ -290,7 +295,7 @@ namespace MwangiFinancial.Controllers
                 }
                 else
                 {
-                    //gritter telling them invite has been used
+                    //greatter telling them invite has been used
                     RedirectToAction("Register", "Account");
                 }
             }
