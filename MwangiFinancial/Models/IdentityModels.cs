@@ -84,9 +84,7 @@ namespace MwangiFinancial.Models
         public DbSet<Invitation> Invitations { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Transaction> Transactions { get; set; }
-
-        public System.Data.Entity.DbSet<MwangiFinancial.Models.AccountType> AccountTypes { get; set; }
-
-        public System.Data.Entity.DbSet<MwangiFinancial.Models.TransactionType> TransactionTypes { get; set; }
+        public DbSet<AccountType> AccountTypes { get; set; }
+        public DbSet<TransactionType> TransactionTypes { get; set; }
     }
 }
