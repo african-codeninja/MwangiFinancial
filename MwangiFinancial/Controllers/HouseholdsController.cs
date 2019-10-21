@@ -4,12 +4,14 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using MwangiFinancial.Helpers;
 using MwangiFinancial.Models;
 using MwangiFinancial.ViewModels;
+using MwangiFinancial.ExtensionMethods;
 
 namespace MwangiFinancial.Controllers
 {
@@ -68,17 +70,66 @@ namespace MwangiFinancial.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Name,Greeting,IsConfigured,Created")] Household household)
+        public async Task<ActionResult> CreateAsync([Bind(Include = "Name,Greeting")] Household household)
         {
             if (ModelState.IsValid)
             {
+                household.Created = DateTimeOffset.UtcNow.ToLocalTime();
                 db.Households.Add(household);
                 db.SaveChanges();
-                return RedirectToAction("Index");
-            }
+                var userId = User.Identity.GetUserId();
+                var user = db.Users.Find(userId);
+                user.HouseholdId = household.Id;
+                db.SaveChanges();
+                roleHelper.RemoveUserFromRole(userId, "LobbyMember");
+                roleHelper.AddUserToRole(userId, "HeadofHouse");
 
+                await AdminHelper.ReathorizeUserAsync(userId);
+                return RedirectToAction("Dashboard");
+            }
             return View(household);
         }
+
+        //POST: Households/WizardSubmit
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult WizardSubmit(BankAccount bankAccount, Budget budget, BudgetItem budgetItem, int houseId)
+        {
+            if (ModelState.IsValid)
+            {
+                bankAccount.HouseholdId = houseId;
+                db.BankAccounts.Add(bankAccount);
+                budget.HouseholdId = houseId;
+                db.MyBudget.Add(budget);
+                db.SaveChanges();
+
+                budgetItem.BudgetId = budget.Id;
+                db.BudgetItems.Add(budgetItem);
+
+                var household = db.Households.Find(houseId);
+                household.IsConfigured = true;
+                db.SaveChanges();
+            }
+            return RedirectToAction("Dashboard");
+        }
+
+        //POST: Households/Invite
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> InviteMember([Bind(Include = "RecipientEmail")] Invitation invitation)
+        {
+            invitation.HouseholdId = User.Identity.GetHouseholdId();
+            invitation.Code = Guid.NewGuid();
+            invitation.ReciepientEmail = db.Users.Find(User.Identity.GetUserId()).FullName;
+
+            db.Invitations.Add(invitation);
+            db.SaveChanges();
+
+            //now send the inv
+            await invitation.SendAsync();
+            return RedirectToAction("Dashboard");
+        }
+
 
         // GET: Households/Edit/5
         public ActionResult Edit(int? id)

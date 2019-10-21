@@ -96,7 +96,7 @@ namespace MwangiFinancial.Controllers
                     {
                         var currentUserId = db.Users.FirstOrDefault(u => u.Email == model.Email).Id;
                         var currentUserRole = roleHelper.ListUserRoles(currentUserId).FirstOrDefault();
-                        if (currentUserRole == "Member")
+                        if (currentUserRole == "LobbyMember")
                         {
                             return RedirectToAction("Lobby", "Home");
                         }
@@ -180,13 +180,11 @@ namespace MwangiFinancial.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Register(RegisterViewModel model, HttpPostedFileBase image, int householdId, Guid code)
+        public async Task<ActionResult> Register(RegisterViewModel model, HttpPostedFileBase AvatarUrl)
         {
             if (ModelState.IsValid)
             {
-                if (householdId == 0)
-                    householdId = db.Households.FirstOrDefault(h => h.Name == "The Lobby").Id;
-
+                
                 var user = new ApplicationUser {
                     HouseholdId = db.Households.Where(h => h.Name == "The Lobby").FirstOrDefault().Id,
                     FirstName = model.FirstName,
@@ -212,14 +210,15 @@ namespace MwangiFinancial.Controllers
                 {
                     //Here is where I want to either assign them the Role of Member or Lobbyist
                     //Depending on whether or not they are accepting an invite or just registering
-                    if (code == new Guid())
-                        roleHelper.AddUserToRole(user.Id,"LobbyMemebr");
-                    else
-                    {
-                        var invitation = db.Invitations.FirstOrDefault(i => i.Code == code);
-                        invitation.used = false;
-                        db.SaveChanges();
-                    }
+                    roleHelper.AddUserToRole(user.Id,"LobbyMember");
+                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+
+                    // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
+                    // Send an email with this link
+                    string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                    var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                    await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+
                     return RedirectToAction("Lobby", "Home");
                 }
                 AddErrors(result);
@@ -524,7 +523,7 @@ namespace MwangiFinancial.Controllers
         public ActionResult LogOff()
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Login", "Account");
         }
 
         //

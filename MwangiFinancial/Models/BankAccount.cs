@@ -18,7 +18,6 @@ namespace MwangiFinancial.Models
         public int? AccountTypeId { get; set; }
 
         //Structure
-        
         public string Name { get; set; }
         public string Description { get; set; }
         public string Address1 { get; set; }

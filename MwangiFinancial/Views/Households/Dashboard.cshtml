@@ -172,9 +172,11 @@
                     <div id="step-4">
                         <div class="jumbotron m-b-0 text-center">
                             <h2 class="text-inverse">You're All Done!</h2>
-                            <p class="m-b-30 f-s-16">In the future, you can create new and alter existing bank accounts, budget categories and budget category items from your household dashboard. <br />
-                            You'll find the ability to add transactions and monitor financial data at the household dashboard as well. <br />
-                            <br />Let's go there now! </p>
+                            <p class="m-b-30 f-s-16">
+                                In the future, you can create new and alter existing bank accounts, budget categories and budget category items from your household dashboard. <br />
+                                You'll find the ability to add transactions and monitor financial data at the household dashboard as well. <br />
+                                <br />Let's go there now!
+                            </p>
                             <p><button type="submit" class="btn btn-teal btn-lg">Proceed to Household Dashboard</button></p>
                         </div>
                     </div>
@@ -189,262 +191,302 @@
 }
 else
 {
-    
-<div id="content">
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-header">
-                <h5>Dashboard for @Model.Household.Name</h5>
-            </div>
-            <div class="card-body">
-              &nbsp;@Model.Household.Greeting         
+
+    <div id="content">
+        <!-- begin row -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Dashboard for @Model.Household.Name</h5>
+                    </div>
+                    <div class="card-body">
+                        &nbsp;@Model.Household.Greeting
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-    
-    @if (User.IsInRole("HeadofHouse"))
-    {       
-     <div class="col-md-12">        
-        <a href="@Url.Action("Create", "BankAccounts")" class="btn btn-info FullWidth">Add Bank Account</a>
-        <a href="@Url.Action("Create", "BudgetCategories")" class="btn btn-info FullWidth">Add Budget Category</a>
-        <a href="@Url.Action("Create", "BudgetCategoryItems")" class="btn btn-info FullWidth">Add Budget Category Item</a>
-     </div>               
-    }
-    <br />
-    <!-- begin row -->
-    <div class="row">
-        <div class="col-lg-4 col-md-6 col-sm-6">
-            <div class="card card-stats">
-                <div class="card-body ">
-                    <div class="row">
-                        <div class="col-5 col-md-4">
-                            <div class="icon-big text-center icon-warning">
-                                <i class="nc-icon nc-globe text-warning"></i>
-                            </div>
-                        </div>
-                        <div class="col-7 col-md-8">
-                            <div class="numbers">
-                                <div class="card-category">Overdrafted Accounts</div>
-                                <h1 class="WidgetNumber">@BadgeHelper.AccountsOverBudget(Model)</h1>
+
+        <!-- begin row -->
+        @if (User.IsInRole("HeadofHouse"))
+        {
+            <div class="row">
+                <div class="col-lg-4 col-md-6 col-sm-6">
+                    <div class="card card-stats">
+                        <div class="card-body ">
+                            <div class="card-title">
+                                <a href="@Url.Action("Create", "BankAccounts")">Add Bank Account</a>
                             </div>
                         </div>
                     </div>
                 </div>
 
-            </div>
-        </div>
+                <div class="col-lg-4 col-md-6 col-sm-6">
+                    <div class="card card-stats">
+                        <div class="card-body ">
+                            <div class="card-title">
+                                <a href="@Url.Action("Create", "BudgetCategories")">Add Budget Category</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-        <div class="col-lg-4 col-md-6 col-sm-6">
-            <div class="card card-stats">
-                <div class="card-body ">
-                    <div class="row">
-                        <div class="col-5 col-md-4">
-                            <div class="icon-big text-center icon-warning">
-                                <i class="nc-icon nc-money-coins text-success"></i>
-                            </div>
-                        </div>
-                        <div class="col-7 col-md-8">
-                            <div class="numbers">
-                                <div class="card-category">Low Balance Accounts:</div>
-                                <h1 class="WidgetNumber">@BadgeHelper.LowBalanceAccounts(Model)</h1>
+                <div class="col-lg-4 col-md-6 col-sm-6">
+                    <div class="card card-stats">
+                        <div class="card-body">
+                            <div class="card-title">
+                                <a href="@Url.Action("Create", "BudgetCategoryItems")">Add Budget Category Item</a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-lg-4 col-md-6 col-sm-6">
-            <div class="card card-stats">
-                <div class="card-body ">
-                    <div class="row">
-                        <div class="col-5 col-md-4">
-                            <div class="icon-big text-center icon-warning">
-                                <i class="nc-icon nc-vector text-danger"></i>
+        }
+        <br />
+        <!-- begin row -->
+        <div class="row">
+            <div class="col-lg-4 col-md-6 col-sm-6">
+                <div class="card card-stats">
+                    <div class="card-body ">
+                        <div class="row">
+                            <div class="col-5 col-md-4">
+                                <div class="icon-big text-center icon-warning">
+                                    <i class="nc-icon nc-globe text-warning"></i>
+                                </div>
+                            </div>
+                            <div class="col-7 col-md-8">
+                                <div class="numbers">
+                                    <div class="card-category">Overdrafted Accounts</div>
+                                    <h1 class="WidgetNumber">@BadgeHelper.AccountsOverBudget(Model)</h1>
+                                </div>
                             </div>
                         </div>
-                        <!-- begin col-3 -->
-                        <div class="col-7 col-md-8">
-                            <div class="numbers">
-                                <div class="card-category">Categories Over Target:</div>
-                                <h1 class="WidgetNumber">@BadgeHelper.CategoriesOverBudget(Model)</h1>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 col-sm-6">
+                <div class="card card-stats">
+                    <div class="card-body ">
+                        <div class="row">
+                            <div class="col-5 col-md-4">
+                                <div class="icon-big text-center icon-warning">
+                                    <i class="nc-icon nc-money-coins text-success"></i>
+                                </div>
+                            </div>
+                            <div class="col-7 col-md-8">
+                                <div class="numbers">
+                                    <div class="card-category">Low Balance Accounts:</div>
+                                    <h1 class="WidgetNumber">@BadgeHelper.LowBalanceAccounts(Model)</h1>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <div class="col-lg-4 col-md-6 col-sm-6">
+                <div class="card card-stats">
+                    <div class="card-body ">
+                        <div class="row">
+                            <div class="col-5 col-md-4">
+                                <div class="icon-big text-center icon-warning">
+                                    <i class="nc-icon nc-vector text-danger"></i>
+                                </div>
+                            </div>
+                            <!-- begin col-3 -->
+                            <div class="col-7 col-md-8">
+                                <div class="numbers">
+                                    <div class="card-category">Categories Over Target:</div>
+                                    <h1 class="WidgetNumber">@BadgeHelper.CategoriesOverBudget(Model)</h1>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end row -->
         </div>
         <!-- end row -->
         <!-- begin row -->
         <div class="row">
-            <div class="col-md-6">
+            <!-- begin col-8 -->
+            <div class="col-md-8">
                 <div class="card card-chart">
                     <div class="card-header">
-                        <h5 class="card-title">24 Hours Performance</h5>
-                        <p class="card-category">Line Chart</p>
+                        <h5 class="card-title">Bank Accounts</h5>
+                        <p class="card-category">Low Balance Level vs Current Balance</p>
                     </div>
                     <div class="card-body">
-                        <canvas id="activeUsers"></canvas>
+                        <div id="morrisBar" style="height: 260px;"></div>
+                        <div class="legend">
+                            <i class="fa fa-circle text-info"></i>Low Budget Level
+                            <i class="fa fa-circle text-info"></i>Current Balance
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="card card-chart">
+            <!-- end col-8 -->
+            <!-- begin col-4 -->
+
+
+            <div class="col-md-4">
+                <div class="card">
                     <div class="card-header">
-                        <h5 class="card-title">NASDAQ: AAPL</h5>
-                        <p class="card-category">Line Chart with Points</p>
+                        <h5>
+                            Transactions (Last 30 Days)
+                        </h5>
                     </div>
+                    <!-- begin widget-list -->
                     <div class="card-body">
-                        <canvas id="chartStock"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-    </div>
-    </div>
-                            <!-- begin widget-list -->
-                            <div class="widget-list widget-list-rounded m-b-30" data-scrollbar="true" data-height="275px">
-                                begin widget-list-item
-                                @*@foreach (var transaction in Model.Household.Memebers.SelectMany(b => b.Transactions.Where(t => t.Created > DateTimeOffset.UtcNow.ToLocalTime().AddMonths(-1))).OrderByDescending(t => t.Created))
-                                {
-                                    var user = db.Users.Find(transaction.CreatedById);
-                                    <div class="widget-list-item">
-                                        <div class="widget-list-media">
-                                            <img src="@user.AvatarUrl" class="rounded" data-toggle="tooltip" data-placement="top" title="@user.FullName" />
-                                        </div>
-                                        <div class="widget-list-content">
-                                            <p class="pull-right">@transaction.BudgetCategoryItem.ItemName</p>
-                                            <h4 class="widget-list-title">@transaction.Payee</h4>
-                                            <p class="widget-list-desc">$@transaction.Amount</p>
-                                        </div>
-                                    </div>
-                                }*@
-                                <!-- end widget-list-item -->
-                            </div>
-                            <!-- end widget-list -->
-                       
-                    
-                    <!-- end col-4 -->
-                
-                <!-- end row -->
-                <!-- begin row -->
-                <div class="row">
-                    <!-- begin col-4 -->
-                    <div class="col-lg-4">
-                        <!-- begin panel -->
-                        <div class="panel panel-default" data-sortable-id="index-2">
-                            <div class="panel-heading">
-                                <h4 class="panel-title">Household Notifications </h4>
-                            </div>
-                            <div class="panel-body bg-silver" data-scrollbar="true" data-height="300px">
-                                <div class="chats">
-                                    @*@foreach (var notification in db.Notifications.Where(n => n.HouseholdId == Model.Household.Id).OrderByDescending(n => n.Created))
-                                    {
-                                        <div class="left">
-                                            <span class="date-time">@notification.Created.DateTime</span>
-                                            <a href="javascript:;" class="name">@notification.NotificationType.ToString()</a>
-                                            <div class="message">
-                                                @notification.NotificationBody
-                                            </div>
-                                        </div>
-                                    }*@
+                        <canvas id="activeUsers" width="826" height="300"></canvas>
+                        <!-- begin widget-list-item -->
+                        @foreach (var transaction in Model.Household.BankAccounts.SelectMany(b => b.Transactions.Where(t => t.Created > DateTimeOffset.UtcNow.ToLocalTime().AddMonths(-1))).OrderByDescending(t => t.Created))
+                        {
+                            var user = db.Users.Find(transaction.EnteredById);
+                            <div class="widget-list-item">
+                                <div class="widget-list-media">
+                                    <img src="@user.AvatarUrl" class="rounded" data-toggle="tooltip" data-placement="top" title="@user.FullName" />
+                                </div>
+                                <div class="widget-list-content">
+                                    <p class="pull-right">@transaction.BudgetItem.ItemName</p>
+                                    <h4 class="widget-list-title">@transaction.Payee</h4>
+                                    <p class="widget-list-desc">$@transaction.Amount</p>
                                 </div>
                             </div>
-                        </div>
-                        <!-- end panel -->
+                        }
+                        <!-- end widget-list-item -->
                     </div>
-                    <!-- end col-4 -->
-                    <!-- begin col-4 -->
-                    <div class="col-lg-4">
-                        <!-- begin panel -->
-                        <div class="panel panel-default" data-sortable-id="index-3">
-                            <div class="panel-heading">
-                                <h4 class="panel-title">Category Expenditures vs Target Budgets (Last 30 Days)</h4>
-                            </div>
-                            <div class="list-group" data-scrollbar="true" data-height="300px">
-                                <br />
-                                @*@foreach (var category in Model.BudgetItem)
-                                {
-                                    var amountUsed = DashboardHelper.TargetAmountUsedThisMonth(category);
-                                    var percentageUsed = Math.Floor(amountUsed * 100);
-                                    if (amountUsed < (decimal).66)
-                                    {
-                                        <p class="m-l-10">@category.</p>
-                                        <div class="container Up15">
-                                             animated
-                                            <div class="progress progress-md m-b-10">
-                                                <div class="progress-bar progress-bar-striped progress-bar-animated rounded-corner bg-lime-transparent-8" style="width: @percentageUsed%"></div>
-                                            </div>
-                                        </div>
-                                    }
-                                    else if (amountUsed < (decimal).85)
-                                    {
-                                        <p class="m-l-10">@category.BudgetCategoryName</p>
-                                        <div class="container Up15">
-                                             animated
-                                            <div class="progress progress-md m-b-10">
-                                                <div class="progress-bar progress-bar-striped progress-bar-animated rounded-corner bg-yellow-transparent-8" style="width: @percentageUsed%"></div>
-                                            </div>
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <p class="m-l-10">@category.BudgetCategoryName</p>
-                                        <div class="container Up15">
-                                             animated
-                                            <div class="progress progress-md m-b-10">
-                                                <div class="progress-bar progress-bar-striped progress-bar-animated rounded-corner bg-red-transparent-8" style="width: @percentageUsed%"></div>
-                                            </div>
-                                        </div>
-                                    }
-
-                                }*@
-                            </div>
-                        </div>
-                        <!-- end panel -->
-                    </div>
-                    <!-- end col-4 -->
-                    <!-- begin col-4 -->
-                    <div class="col-lg-4">
-                        <!-- begin panel -->
-                        <div class="panel panel-default" data-sortable-id="index-4">
-                            <div class="panel-heading">
-                                <h4 class="panel-title">Household Members</h4>
-                            </div>
-                            <ul>
-                                @foreach (var member in Model.Household.Memebers.ToList())
-                                {
-                                    <li>
-                                        <a><img src="@member.AvatarUrl" alt="" /></a>
-                                        <h4 class="username">
-                                            @member.FullName
-                                        </h4>
-                                    </li>
-                                }
-                            </ul>
-                         
-                        </div>
-                        <!-- end panel -->
-                    </div>
-                    <!-- end col-4 -->
+                    <!-- end widget-list -->
                 </div>
-                <!-- end row -->
-    
-  }
+            </div>
+            <!-- end col-4 -->
+        </div>
+        <!-- end row -->
+        <!-- begin row -->
+        <div class="row">
+            <!-- begin col-4 -->
+            <div class="col-lg-4">
+                <!-- begin panel -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Household Notifications </h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="activeUsers" width="826" height="380"></canvas>
+                        <div class="chats">
+                            @foreach (var notification in db.Notifications.Where(n => n.HouseholdId == Model.Household.Id).OrderByDescending(n => n.Created))
+                            {
+                                <div class="left">
+                                    <span class="date-time">@notification.Created.DateTime</span>
+                                    <a href="javascript:;" class="name">@notification.NotificationType.ToString()</a>
+                                    <div class="message">
+                                        @notification.NotificationBody
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <!-- end panel -->
+            </div>
+            <!-- end col-4 -->
+            <!-- begin col-4 -->
+            <div class="col-lg-4">
+                <!-- begin panel -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Category Expenditures vs Target Budgets (Last 30 Days)</h5>
+                    </div>
+                    <div class="list-group" data-scrollbar="true" data-height="300px">
+                        <br />
+                        @foreach (var category in Model.Household.MyBudget)
+                        {
+                            var amountUsed = DashboardHelper.TargetAmountUsedThisMonth(category);
+                            var percentageUsed = Math.Floor(amountUsed * 100);
+                            if (amountUsed < (double).66)
+                            {
+                                <p class="m-l-10">@category.BudgetName</p>
+                                <div class="container Up15">
+                                    <!-- animated -->
+                                    <div class="progress progress-md m-b-10">
+                                        <div class="progress-bar progress-bar-striped progress-bar-animated rounded-corner bg-lime-transparent-8" style="width: @percentageUsed%"></div>
+                                    </div>
+                                </div>
+                            }
+                            else if (amountUsed < (double).85)
+                            {
+                                <p class="m-l-10">@category.BudgetName</p>
+                                <div class="container Up15">
+                                    <!-- animated -->
+                                    <div class="progress progress-md m-b-10">
+                                        <div class="progress-bar progress-bar-striped progress-bar-animated rounded-corner bg-yellow-transparent-8" style="width: @percentageUsed%"></div>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <p class="m-l-10">@category.BudgetName</p>
+                                <div class="container Up15">
+                                    <!-- animated -->
+                                    <div class="progress progress-md m-b-10">
+                                        <div class="progress-bar progress-bar-striped progress-bar-animated rounded-corner bg-red-transparent-8" style="width: @percentageUsed%"></div>
+                                    </div>
+                                </div>
+                            }
 
-            @section scripts{
-                <script>
-                    $.post('/Dashboard/BuildAccountBudgetData', function (barDataList) {
-                        new Morris.Bar({
-                            resize: true,
-                            element: 'morrisBar',
-                            data: barDataList,
-                            xkey: 'budget',
-                            ykeys: ['target', 'actual'],
-                            labels: ['Low Budget Level', 'Current Balance'],
-                            hideHover: true,
-                            barColors: ['#404040', '#04c5c5']
-                        });
-                    });
-                </script>
-            }
+                        }
+                    </div>
+                </div>
+                <!-- end panel -->
+            </div>
+            <!-- end col-4 -->
+            <!-- begin col-4 -->
+            <div class="col-lg-4">
+                <!-- begin panel -->
+                <div class="card">
+                    <div class="panel-heading">
+                        <h5 class="panel-title">Household Members</h5>
+                    </div>
+                    <ul class="registered-users-list clearfix" data-scrollbar="true" data-height="300px">
+                        @foreach (var member in Model.Household.Memebers.ToList())
+                        {
+                            <li>
+                                <a><img src="@member.AvatarUrl" width="50" /></a>
+                                <h5 class="username">
+                                    @member.FullName
+                                    @*<small>@roleHelper.ListUserRoles(member.Id).FirstOrDefault()</small>*@
+                                </h5>
+                            </li>
+                        }
+                    </ul>
+                    @*<div class="panel-footer text-center">
+            <a href="javascript:;" class="text-inverse">View All</a>
+        </div>*@
+                </div>
+                <!-- end panel -->
+            </div>
+            <!-- end col-4 -->
+        </div>
+        <!-- end row -->
+    </div>
+
+
+}
+
+@section scripts{
+    <script>
+        $.post('/Dashboard/BuildAccountBudgetData', function (barDataList) {
+            new Morris.Bar({
+                resize: true,
+                element: 'morrisBar',
+                data: barDataList,
+                xkey: 'budget',
+                ykeys: ['target', 'actual'],
+                labels: ['Low Budget Level', 'Current Balance'],
+                hideHover: true,
+                barColors: ['#404040', '#04c5c5']
+            });
+        });
+    </script>
+}
